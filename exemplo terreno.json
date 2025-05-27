@@ -1,0 +1,542 @@
+{
+    "A1": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "GUIANA"
+    },
+    "A2": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "GUIANA"
+    },
+    "A3": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "GUIANA"
+    },
+    "A4": {
+      "Geografia": "Ponte",
+      "Deslocamento": 1,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "GUIANA"
+    },
+    "A5": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "GUIANA"
+    },
+    "A6": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "GUIANA"
+    },
+    "A7": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "GUIANA"
+    },
+    "A8": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "GUIANA"
+    },
+    "A9": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "GUIANA"
+    },
+    "A10": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "GUIANA"
+    },
+    "A11": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "GUIANA"
+    },
+    "A12": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "A13": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "GUIANA"
+    },
+    "A14": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "A15": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "GUIANA"
+    },
+    "A16": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "GUIANA"
+    },
+    "A17": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "GUIANA"
+    },
+    "A18": {
+      "Geografia": "Selva",
+      "Deslocamento": -1,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": -1, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Infantaria", "OBS": "INFANTARIA"
+    },
+    "A19": {
+      "Geografia": "Selva",
+      "Deslocamento": -1,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": -1, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Infantaria", "OBS": "INFANTARIA"
+    },
+    "A20": {
+      "Geografia": "Selva",
+      "Deslocamento": -1,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": -1, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Infantaria", "OBS": "SELVA"
+    },
+    "A21": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "A22": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "A23": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "A24": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "A25": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "A26": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "BRASIL", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "A27": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "BRASIL", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "A28": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "BRASIL", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "A29": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "BRASIL", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "A30": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "B1": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "B2": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "B3": {
+      "Geografia": "Ponte",
+      "Deslocamento": 1,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "B4": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "B5": {
+      "Geografia": "Ponte",
+      "Deslocamento": 1,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "B6": {
+      "Geografia": "Ponte",
+      "Deslocamento": 1,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "B7": {
+      "Geografia": "Ponte",
+      "Deslocamento": 1,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TERRESTRE"
+    },
+    "B8": {
+      "Geografia": "Ponte",
+      "Deslocamento": 1,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "B9": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "B10": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B11": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B12": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B13": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B14": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B15": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B16": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B17": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TERRESTRE"
+    },
+    "B18": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Todos", "OBS": "TERRESTRE"
+    },
+    "B19": {
+      "Geografia": "Selva alta",
+      "Deslocamento": -1,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": -1, "Visibilidade": 1, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Infantaria", "OBS": "Infantaria"
+    },
+    "B20": {
+      "Geografia": "Selva",
+      "Deslocamento": -1,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": -1, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Infantaria", "OBS": "Infantaria"
+    },
+    "B21": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B22": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B23": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B24": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B25": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "VENEZUELA", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B26": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "BRASIL", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "B27": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "BRASIL", "DisponivelP": "Todos", "OBS": "TODOS"
+    },
+    "B28": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "BRASIL", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B29": {
+      "Geografia": "Floresta",
+      "Deslocamento": 0,
+      "CustoMovHex": 1,
+      "TiposUnidadePermitidos": ["Tropa", "VeiculoLeve", "VeiculoPesado", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "BRASIL", "DisponivelP": "Terrestre", "OBS": "TERRESTRE"
+    },
+    "B30": {
+      "Geografia": "Rio",
+      "Deslocamento": 0,
+      "CustoMovHex": 2,
+      "TiposUnidadePermitidos": ["Tropa", "Aereo"],
+      "Espaco": 0, "Visibilidade": 0, "Alcance": 0, "Economia": 0, "Tropa": 0, "Aeronave": 0,
+      "AtivoAereo": "Nenhum", "AtivoTerrestre": "Nenhum", "AtivoFluvial": "Nenhum",
+      "DominadoPor": "BRASIL", "DisponivelP": "Todos", "OBS": "TODOS"
+    }
+    

@@ -1,0 +1,575 @@
+// ai-logic.js
+
+window.gameNS = window.gameNS || {};
+window.gameNS.ai = window.gameNS.ai || {};
+
+window.gameNS.ai.isExecutingTurn = false;
+
+/**
+ * Missões da IA com níveis de dificuldade
+ */
+window.gameNS.ai.missions = {
+    easy: {
+        difficulty: "easy",
+        description: "Colocar um radar JY-14 no mapa e defender ele aleatoriamente.",
+        objective: "Defender o radar JY-14.",
+        unitsToPlace: [{ unitId: "29", count: 1 }], // Substitua "RadarJy-14" pelo ID real
+        defenseStrategy: "random", // A IA defenderá de forma aleatória
+        attackStrategy: "none" // IA não ataca
+    },
+    medium: {
+        difficulty: "medium",
+        description: "Colocar dois radares JY-14 espaçados na região esquerda e no centro do mapa e as defender.",
+        objective: "Defender os radares JY-14.",
+        unitsToPlace: [{ unitId: "29", count: 2 }],
+        placementStrategy: "left_center", // Estratégia de posicionamento
+        defenseStrategy: "prioritize_threats", // Prioriza defender contra ameaças
+        attackStrategy: "opportunistic" // Ataca quando tem oportunidade
+    },
+    hard: {
+        difficulty: "hard",
+        description: "Colocar três radares JY-14 em posições estratégicas e os defender e atacar o inimigo de forma estratégica e brilhante.",
+        objective: "Defender os radares JY-14 e atacar o inimigo.",
+        unitsToPlace: [{ unitId: "29", count: 3 }],
+        placementStrategy: "strategic", // Posicionamento estratégico
+        defenseStrategy: "coordinated", // Defesa coordenada
+        attackStrategy: "strategic" // Ataque estratégico
+    }
+};
+
+/**
+ * Função principal para executar o turno da IA.
+ * Esta função é assíncrona e deve retornar uma Promise.
+ */
+window.gameNS.ai.executeAITurn = async function() {
+    if (window.gameNS.ai.isExecutingTurn === true) {
+        console.warn("[AI] IA já está executando um turno. Ignorando chamada.");
+        return;
+    }
+    window.gameNS.ai.isExecutingTurn = true;
+
+    console.log("%c[AI] Iniciando turno da IA...", "color: purple; font-weight: bold;");
+
+    try {
+        // 1. Avaliar a Situação Atual do Jogo
+        const gameState = window.gameNS.ai.getGameState();
+
+        // 2. Definir Metas (Objetivos)
+        const goals = window.gameNS.ai.defineGoals(gameState);
+
+        // 3. Planejar Ações
+        const actions = await window.gameNS.ai.planActions(gameState, goals); // Asynchronous
+
+        // 4. Executar Ações
+        await window.gameNS.ai.executeActions(actions); // Asynchronous
+
+    } catch (error) {
+        console.error("[AI] Erro durante o turno da IA:", error);
+    } finally {
+        console.log("%c[AI] Turno da IA finalizado.", "color: purple; font-weight: bold;");
+        window.gameNS.ai.isExecutingTurn = false;
+        // 5. Passar o Turno de Volta para o Jogador
+        window.gameNS.endTurn();
+    }
+};
+
+/**
+ * Obtém o estado atual do jogo relevante para a IA.
+ * @returns {object} Um objeto contendo o estado do jogo.
+ */
+window.gameNS.ai.getGameState = function() {
+    const gameState = {
+        placedUnits: window.gameNS.placedUnits,
+        terrainData: window.gameNS.terrainData,
+        currentGameInfo: window.gameNS.currentGameInfo,
+        aiOpponentCountry: window.gameNS.aiOpponentCountry
+    };
+    return gameState;
+};
+
+/**
+ * Define as metas da IA com base no estado do jogo.
+ * @param {object} gameState - O estado do jogo.
+ * @returns {array} Um array de objetos representando as metas.
+ */
+window.gameNS.ai.defineGoals = function(gameState) {
+    const aiCountry = gameState.aiOpponentCountry;
+    const currentMissionDifficulty = window.gameNS.currentGameInfo.difficulty; // "easy", "medium", "hard"
+    const currentMission = window.gameNS.ai.missions[currentMissionDifficulty];
+
+    const goals = [];
+
+    // === DEFESA DOS RADARES ====================================================
+    // Se a missão tem o objetivo de defender os radares, adicione uma meta de defesa
+    if (currentMission && currentMission.objective.includes("Defender os radares")) {
+      const radarUnits = Object.values(gameState.placedUnits).filter(unit =>
+          unit.PAÍS === aiCountry && unit.originalUnitIdKey === "RadarJy-14"  // Garante que é o radar JY-14
+      );
+
+      if (radarUnits.length > 0) {
+            // Se tem radares no mapa, priorizar a defesa deles
+            goals.push({ type: "defendRadars", priority: 9 }); // Alta prioridade
+      } else {
+            // Se não tem radares, priorizar colocar eles.
+            goals.push({ type: "placeUnits", priority: 8 });
+      }
+    }
+
+    // === POSICIONAMENTO INICIAL ==================================================
+    // Se a missão tem unidades para colocar, dar prioridade para isso
+    if (currentMission && currentMission.unitsToPlace && currentMission.unitsToPlace.length > 0) {
+      goals.push({ type: "placeUnits", priority: 7 });
+    }
+
+    // === ATAQUE ================================================================
+    if (currentMission && currentMission.attackStrategy !== "none") {
+      goals.push({ type: "attack", priority: 6 }); // Media prioridade para atacar.
+    }
+
+    // === EXPLORAÇÃO =============================================================
+    goals.push({ type: "explore", priority: 2 }); // Baixa prioridade para explorar
+
+    // Ordenar as metas por prioridade
+    goals.sort((a, b) => b.priority - a.priority);
+    return goals;
+};
+
+/**
+ * Planeja as ações da IA para atingir suas metas.
+ * @param {object} gameState - O estado do jogo.
+ * @param {array} goals - O array de metas.
+ * @returns {Promise<array>} Um array de objetos representando as ações planejadas.
+ */
+window.gameNS.ai.planActions = async function(gameState, goals) {
+    const actions = [];
+
+    for (const goal of goals) {
+        if (goal.type === "placeUnits") {
+            const placeUnitActions = window.gameNS.ai.planPlaceUnitActions(gameState);
+            actions.push(...placeUnitActions);
+        } else if (goal.type === "attack") {
+            const attackActions = window.gameNS.ai.planAttackActions(gameState);
+            actions.push(...attackActions);
+        } else if (goal.type === "explore") {
+            const exploreActions = window.gameNS.ai.planExploreActions(gameState);
+            actions.push(...exploreActions);
+        } else if (goal.type === "defendRadars") {
+          const defendRadarsActions = window.gameNS.ai.planDefendRadarsAction(gameState);
+            actions.push(...defendRadarsActions);
+        }
+    }
+    return actions;
+};
+
+/**
+ * Planeja ações para colocar unidades no mapa no início da missão
+ */
+window.gameNS.ai.planPlaceUnitActions = function(gameState) {
+    const actions = [];
+    const aiCountry = gameState.aiOpponentCountry;
+    const currentMissionDifficulty = window.gameNS.currentGameInfo.difficulty;
+    const currentMission = window.gameNS.ai.missions[currentMissionDifficulty];
+
+    if (!currentMission || !currentMission.unitsToPlace) {
+        console.warn("[AI] Nenhuma unidade para colocar definida para esta missão.");
+        return actions;
+    }
+
+    for (const unitToPlaceInfo of currentMission.unitsToPlace) {
+      const unitId = unitToPlaceInfo.unitId;
+      const unitCount = unitToPlaceInfo.count;
+
+        for (let i = 0; i < unitCount; i++) {
+            let hexToPlace;
+
+            switch (currentMission.placementStrategy) {
+                case "left_center":
+                    hexToPlace = window.gameNS.ai.findSuitableHexForRadarPlacement(gameState, "left_center");
+                    break;
+                case "strategic":
+                    hexToPlace = window.gameNS.ai.findSuitableHexForRadarPlacement(gameState, "strategic");
+                    break;
+                default:
+                    hexToPlace = window.gameNS.ai.findSuitableHexForRadarPlacement(gameState, "random");
+                    break;
+            }
+            if (hexToPlace) {
+                actions.push({
+                    type: "placeUnit",
+                    originalUnitIdKey: unitId,
+                    hexToPlace: hexToPlace
+                });
+            } else {
+                console.warn("[AI] Não foi possível encontrar um hex adequado para colocar a unidade.");
+            }
+        }
+    }
+    return actions;
+};
+
+/**
+ * Encontra um hexágono adequado para colocar um radar, considerando a estratégia de posicionamento
+ * @param {object} gameState
+ * @param {string} placementStrategy
+ */
+window.gameNS.ai.findSuitableHexForRadarPlacement = function(gameState, placementStrategy) {
+    const emptyHexes = [];
+    for (const hexCoord in gameState.terrainData) {
+        if (!window.gameNS.getUnitOnHex(hexCoord)) {
+            emptyHexes.push(hexCoord);
+        }
+    }
+
+    if (emptyHexes.length === 0) {
+        console.warn("[AI] Não há hexágonos vazios.");
+        return null;
+    }
+
+    let suitableHexes = emptyHexes; // Por padrão, use todos os hexes vazios
+
+    if (placementStrategy === "left_center") {
+         const numRows = window.gameNS.config?.numRows;
+         const hexPerRow = window.gameNS.config?.hexPerRow;
+
+        // 1. Filtrar para a metade esquerda e região central
+        suitableHexes = emptyHexes.filter(hex => {
+            const hexSvg = window.gameNS.utils.getHexagonSvgByCoord(hex);
+            const col = parseInt(hexSvg?.dataset.col || '0');
+            const row = parseInt(hexSvg?.dataset.row || '0');
+            return (col < hexPerRow / 2) || (row > numRows / 4 && row < 3 * numRows / 4); // Metade esquerda ou centro
+        });
+    } else if (placementStrategy === "strategic") {
+      const numRows = window.gameNS.config?.numRows;
+      const hexPerRow = window.gameNS.config?.hexPerRow;
+
+       suitableHexes = emptyHexes.filter(hex => {
+        const hexSvg = window.gameNS.utils.getHexagonSvgByCoord(hex);
+        const col = parseInt(hexSvg?.dataset.col || '0');
+        const row = parseInt(hexSvg?.dataset.row || '0');
+
+            // Dividir o mapa em três regiões verticais
+            const leftSide = col < hexPerRow / 3;
+            const centerArea = col >= hexPerRow / 3 && col < 2 * hexPerRow / 3;
+            const rightSide = col >= 2 * hexPerRow / 3;
+
+            // Retornar true para a região específica
+            return leftSide || centerArea || rightSide;
+    });
+    }
+
+    if (suitableHexes.length === 0) {
+        console.warn("[AI] Não encontrou hexágonos adequados com a estratégia atual.");
+        return null;
+    }
+
+    const randomIndex = Math.floor(Math.random() * suitableHexes.length);
+    return suitableHexes[randomIndex];
+};
+
+/**
+ * Planeja ações de ataque.
+ * @param {object} gameState - O estado do jogo
+ * @returns {array} Um array de objetos representando ações de ataque
+ */
+window.gameNS.ai.planAttackActions = function(gameState) {
+    const actions = [];
+    const aiCountry = gameState.aiOpponentCountry;
+    const currentMissionDifficulty = window.gameNS.currentGameInfo.difficulty;
+    const currentMission = window.gameNS.ai.missions[currentMissionDifficulty];
+
+    // 1. Encontre todas as unidades da IA que podem atacar
+    const attackingUnits = Object.entries(gameState.placedUnits)
+        .filter(([instanceId, unit]) =>
+            unit.PAÍS === aiCountry &&
+            !unit.hasAttackedThisTurn &&
+            window.gameNS.cardProperties[unit.originalUnitIdKey]["PODER DE FOGO"] > 0
+        )
+        .map(([instanceId, unit]) => ({
+            instanceId: instanceId,
+            unit: unit,
+            unitData: window.gameNS.cardProperties[unit.originalUnitIdKey]
+        }));
+
+    if (attackingUnits.length === 0) {
+        console.log("[AI] IA não tem unidades que podem atacar neste turno.");
+        return actions;
+    }
+
+    // 2. Para cada unidade atacante, encontre alvos em alcance
+    for (const attacker of attackingUnits) {
+        const validTargets = window.gameNS.getUnitsInAttackRange(attacker.instanceId, attacker.unit.currentAlcance);
+        if (validTargets.length > 0) {
+            let targetId;
+
+             if (currentMission.attackStrategy === "strategic" || currentMission.attackStrategy === "opportunistic") {
+
+                const radarUnits = Object.values(gameState.placedUnits).filter(unit =>
+                    unit.PAÍS !== aiCountry && unit.originalUnitIdKey !== "RadarJy-14"
+                );
+                if (radarUnits.length > 0) {
+                //console.log("Radar atual para defender", radar.unit)
+                targetId = radarUnits[Math.floor(Math.random() * radarUnits.length)].instanceId //Ataque as unidades inimigas caso as torres estejam seguras
+              } else {
+                 targetId = validTargets[Math.floor(Math.random() * validTargets.length)];// Se houver torres inimigas, ataque elas.
+                 console.log("ta sem torre")
+              }
+
+             } else  {
+
+               targetId = validTargets[Math.floor(Math.random() * validTargets.length)];
+             }
+            // Escolha um alvo aleatório
+            actions.push({
+                type: "attack",
+                attackerId: attacker.instanceId,
+                targetId: targetId
+            });
+        }
+    }
+    return actions;
+};
+
+/**
+ * Planeja ações de exploração
+ * @param {object} gameState - Estado do jogo
+ * @returns {array} Um array de objetos representando ações de exploração
+ */
+window.gameNS.ai.planExploreActions = function(gameState) {
+    const actions = [];
+
+    // 1. Encontre unidades da IA que podem se mover
+    const aiUnitsThatCanMove = Object.entries(gameState.placedUnits)
+        .filter(([instanceId, unit]) =>
+            unit.PAÍS === gameState.aiOpponentCountry &&
+            !unit.hasMovedThisTurn &&
+            unit.currentMovimento > 0
+        )
+        .map(([instanceId, unit]) => ({ instanceId, unit }));
+
+    if (aiUnitsThatCanMove.length === 0) {
+        console.log("[AI] IA não tem unidades para explorar neste turno.");
+        return actions;
+    }
+
+    // 2. Para cada unidade, planeje um movimento aleatório para um hex vizinho
+    for (const aiUnit of aiUnitsThatCanMove) {
+        const currentHex = aiUnit.unit.currentHex;
+        const neighborHexCoords = window.gameNS.getNeighborHexCoords(currentHex);
+
+        if (neighborHexCoords.length > 0) {
+            // Escolha um vizinho aleatório para mover
+            const randomNeighborIndex = Math.floor(Math.random() * neighborHexCoords.length);
+            const targetHex = neighborHexCoords[randomNeighborIndex];
+
+            actions.push({
+                type: "move",
+                unitId: aiUnit.instanceId,
+                targetHex: targetHex
+            });
+        }
+    }
+    return actions;
+};
+
+/**
+ * Planeja ações para defender os radares JY-14
+ */
+window.gameNS.ai.planDefendRadarsAction = function(gameState) {
+    const actions = [];
+    const aiCountry = gameState.aiOpponentCountry;
+    const currentMissionDifficulty = window.gameNS.currentGameInfo.difficulty;
+    const currentMission = window.gameNS.ai.missions[currentMissionDifficulty];
+
+    // 1. Encontre os radares da IA
+    const radarUnits = Object.entries(gameState.placedUnits)
+        .filter(([instanceId, unit]) => unit.PAÍS === aiCountry && unit.originalUnitIdKey === "RadarJy-14")
+        .map(([instanceId, unit]) => ({ instanceId, unit }));
+
+    if (radarUnits.length === 0) {
+        console.warn("[AI] Nenhum radar para defender.");
+        return actions;
+    }
+
+    // 2. Encontre unidades inimigas perto dos radares
+    for (const radar of radarUnits) {
+        //console.log("Radar atual para defender", radar.unit)
+        const radarHex = radar.unit.currentHex;
+        const unitsInRange = window.gameNS.getUnitsInAttackRange(radar.instanceId, 3); // Ajuste o alcance conforme necessário
+
+        //console.log("Unidades em alcance", unitsInRange)
+        if (unitsInRange.length > 0) {
+          const targetId = unitsInRange[Math.floor(Math.random() * unitsInRange.length)];
+          actions.push({
+            type: "attack",
+            attackerId: radar.instanceId,
+            targetId: targetId
+          })
+        }
+
+    }
+    return actions;
+};
+
+/**
+ * Executa as ações planejadas pela IA.
+ * @param {array} actions - O array de ações a serem executadas.
+ * @returns {Promise<void>}
+ */
+window.gameNS.ai.executeActions = async function(actions) {
+    for (const action of actions) {
+        if (action.type === "placeUnit") {
+            await window.gameNS.ai.executePlaceUnitAction(action);
+        } else if (action.type === "attack") {
+            await window.gameNS.ai.executeAttackAction(action);
+        } else if (action.type === "move") {
+            await window.gameNS.ai.executeMoveAction(action);
+        } else if (action.type === "defendRadars") {
+           // As ações de defesa já estão sendo feitas através da função planAttackActions, não precisa de uma função diferente para executar a defesa
+        }
+        // Aguarde um curto período para simular tempo de "pensamento"
+        await new Promise(resolve => setTimeout(resolve, 200));
+    }
+};
+
+/**
+ * Executa uma ação de colocar unidade
+ * @param {object} action - A ação a ser executada
+ */
+window.gameNS.ai.executePlaceUnitAction = async function(action) {
+    return new Promise(resolve => {
+
+        const { originalUnitIdKey, hexToPlace } = action;
+
+        const unitDataForPlacement = window.gameNS.cardProperties[originalUnitIdKey];
+        if (!unitDataForPlacement) {
+            console.error("[AI] Dados da unidade não encontrados para:", originalUnitIdKey);
+            resolve();
+            return;
+        }
+
+        const targetHexSvg = window.gameNS.utils.getHexagonSvgByCoord(hexToPlace);
+        if (!targetHexSvg) {
+            console.warn(`[AI] Hex SVG para ${hexToPlace} não encontrado.`);
+            resolve();
+            return;
+        }
+
+        if (!window.gameNS.unitInstanceCounters[originalUnitIdKey]) window.gameNS.unitInstanceCounters[originalUnitIdKey] = 0;
+        window.gameNS.unitInstanceCounters[originalUnitIdKey]++;
+        const friendlyInstanceSuffix = window.gameNS.unitInstanceCounters[originalUnitIdKey];
+        const uniqueInstanceId = `${originalUnitIdKey.substring(0, 5)}_${Date.now().toString().substring(8)}_${Math.random().toString(36).substring(2, 6)}`;
+
+        const unitName = unitDataForPlacement["NOME"] || originalUnitIdKey;
+        let unitImageSrc = unitDataForPlacement["IMAGEM"]?.trim() || 'https://placehold.co/38x52/1f2937/9ca3af?text=S/Img';
+        if (unitImageSrc.includes('drive.google.com')) {
+            const fileIdMatch = unitImageSrc.match(/\/d\/([a-zA-Z0-9_-]+)(?:\/|$)/);
+            unitImageSrc = (fileIdMatch && fileIdMatch[1]) ? `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}` : 'https://placehold.co/38x52/1f2937/9ca3af?text=LnkInv';
+        }
+
+        if (!window.gameNS.placedUnits) window.gameNS.placedUnits = {};
+        window.gameNS.placedUnits[uniqueInstanceId] = {
+            instanceId: uniqueInstanceId, originalUnitIdKey: originalUnitIdKey, currentHex: hexToPlace,
+            currentBlindagem: parseInt(unitDataForPlacement["BLINDAGEM"] || 0),
+            currentMovimento: parseInt(unitDataForPlacement["DESLOCAMENTO"] || 0),
+            currentAlcance: parseInt(unitDataForPlacement["ALCANCE"] || 0),
+            PAÍS: unitDataForPlacement["PAÍS"], NOME: unitDataForPlacement["NOME"],
+            hasMovedThisTurn: false, hasAttackedThisTurn: false, isDamaged: false,
+            friendlySuffix: friendlyInstanceSuffix
+        };
+
+        window.gameNS.rebuildPlacedUnitsOnMap();
+        console.log(`[AI] IA colocou unidade ${unitName} (ID: ${uniqueInstanceId}) em ${hexToPlace}.`);
+        resolve();
+    });
+};
+
+/**
+ * Executa uma ação de ataque
+ * @param {object} action - A ação a ser executada
+ */
+window.gameNS.ai.executeAttackAction = async function(action) {
+    return new Promise(resolve => {
+        const { attackerId, targetId } = action;
+
+        if (typeof window.gameNS.executeAttack === 'function') {
+            const attackSuccessful = window.gameNS.executeAttack(attackerId, targetId);
+            if (attackSuccessful) {
+                console.log(`[AI] Unidade ${attackerId} atacou ${targetId}.`);
+            } else {
+                console.warn(`[AI] Falha ao executar ataque de ${attackerId} para ${targetId}.`);
+            }
+        } else {
+            console.error("[AI] Função executeAttack não definida!");
+        }
+        resolve();
+    });
+};
+
+/**
+ * Executa uma ação de movimentação de unidade.
+ * @param {object} action - A ação a ser executada
+ * @returns {Promise<void>}
+ */
+window.gameNS.ai.executeMoveAction = async function(action) {
+    return new Promise(resolve => {
+        const { unitId, targetHex } = action;
+
+        // 1. Obtenha a unidade e seus dados
+        const unitToMove = window.gameNS.placedUnits[unitId];
+        if (!unitToMove) {
+            console.warn(`[AI] Unidade ${unitId} não encontrada para movimentação.`);
+            resolve();
+            return;
+        }
+
+        const unitData = window.gameNS.cardProperties[unitToMove.originalUnitIdKey];
+         if (!unitData) {
+             console.warn(`[AI] Dados da unidade ${unitId} não encontrados para movimentação.`);
+             resolve();
+             return;
+         }
+
+        // 2. Calcule o alcance de movimento
+        const movementPoints = parseInt(unitToMove.currentMovimento);
+        const unitType = window.gameNS.movementLogic.getUnitMovementType(unitData);
+        const originalHexWrapper = document.querySelector(`.hexagon-wrapper:has(.unit-map-token[data-token-id="${unitId}"])`);
+
+        if (!originalHexWrapper) {
+             console.warn(`[AI] Unidade ${unitId} não está em um hex válido.`);
+             resolve();
+             return;
+         }
+         const reachableHexes = window.gameNS.movementLogic.getReachableHexes(originalHexWrapper, movementPoints, unitType);
+
+        // 3. Verifique se o hex alvo está dentro do alcance
+        if (!reachableHexes.has(targetHex)) {
+            console.warn(`[AI] Hex alvo ${targetHex} está fora do alcance da unidade ${unitId}.`);
+            resolve();
+            return;
+        }
+
+        // 4. Obtenha os elementos DOM do hex alvo
+        const targetHexSvg = window.gameNS.utils.getHexagonSvgByCoord(targetHex);
+        if (!targetHexSvg) {
+            console.warn(`[AI] Hex SVG para ${targetHex} não encontrado.`);
+            resolve();
+            return;
+        }
+        const targetHexWrapper = targetHexSvg.closest('.hexagon-wrapper');
+        if (!targetHexWrapper) {
+             console.warn(`[AI] Hex Wrapper para ${targetHex} não encontrado.`);
+             resolve();
+             return;
+         }
+
+        // 5. Atualize os dados da unidade e reconstrua as unidades no mapa
+        unitToMove.currentHex = targetHex;
+        unitToMove.hasMovedThisTurn = true;
+        window.gameNS.rebuildPlacedUnitsOnMap();
+
+        console.log(`[AI] Unidade ${unitId} moveu para ${targetHex}.`);
+        resolve();
+    });
+};
+
+console.log("[AI] ai-logic.js carregado.");

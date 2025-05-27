@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobby Online - Selva! Guerra Estratégica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css"> <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('img/guerraselva.jpeg'); /* Mesma imagem de fundo do menu */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .lobby-container {
+            background-color: rgba(30, 40, 35, 0.85);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(51, 255, 0, 0.2);
+        }
+        .lobby-title {
+            color: #33ff00;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
+        .lobby-button {
+            background-color: #16a34a;
+            color: white;
+            margin: 5px 0;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            border: none;
+            cursor: pointer;
+        }
+        .lobby-button:hover:not(:disabled) { /* Adicionado :not(:disabled) */
+            background-color: #15803d;
+            transform: translateY(-1px);
+        }
+        .lobby-button:disabled { /* Estilo para botão desabilitado */
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .lobby-button-confirm { /* Estilo para o botão de confirmação, se quiser diferenciar */
+            background-color: #2563eb; /* Exemplo: Azul */
+        }
+        .lobby-button-confirm:hover:not(:disabled) {
+            background-color: #1d4ed8;
+        }
+        .lobby-button-secondary {
+             background-color: #4b5563;
+        }
+        .lobby-button-secondary:hover {
+            background-color: #374151;
+        }
+        .lobby-input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            border: 1px solid #4b6351;
+            border-radius: 6px;
+            background-color: rgba(55, 65, 81, 0.8);
+            color: #e5e7eb;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+        }
+        .lobby-input::placeholder {
+            color: #9ca3af;
+        }
+        .lobby-input:focus {
+            outline: none;
+            border-color: #33ff00;
+            box-shadow: 0 0 0 3px rgba(51, 255, 0, 0.3);
+        }
+        .room-id-display {
+            background-color: rgba(17, 24, 39, 0.7);
+            border: 1px dashed #33ff00;
+            color: #e5e7eb;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: break-all;
+        }
+        .error-message {
+            color: #f87171;
+            min-height: 1.25rem;
+        }
+        .hidden { /* Classe para esconder elementos */
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen text-gray-200 p-4">
+
+    <div class="lobby-container p-8 md:p-12 rounded-xl shadow-2xl w-full max-w-lg">
+        <div class="text-center mb-8">
+            <img src="img/NOVA LOGO2.png" alt="Logo Selva!" class="mx-auto h-28 w-28 md:h-36 md:w-36 mb-2">
+            <h1 class="lobby-title text-3xl md:text-4xl font-bold">LOBBY ONLINE</h1>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-3 text-green-400">Criar Nova Sala</h2>
+            <button id="lobby-btn-create-room" class="lobby-button w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Gerar ID da Sala
+            </button>
+            <div id="lobby-created-room-id-display" class="room-id-display mt-3 text-center hidden">
+                </div>
+            <p id="lobby-share-id-instructions" class="text-xs text-gray-400 mt-2 text-center hidden">Copie e compartilhe este ID com seu oponente.</p>
+            
+            <button id="lobby-btn-confirm-create-room" class="lobby-button lobby-button-confirm w-full mt-3 hidden">
+                Confirmar e Entrar na Sala (Jogador 1)
+            </button>
+        </div>
+
+        <hr class="border-gray-600 my-8">
+
+        <div>
+            <h2 class="text-xl font-semibold mb-3 text-green-400">Entrar em Sala Existente</h2>
+            <label for="lobby-input-join-room-id" class="block text-sm font-medium mb-1 text-gray-300">Digite o ID da Sala:</label>
+            <input type="text" id="lobby-input-join-room-id" class="lobby-input mb-3" placeholder="Ex: SELVA-ABCDE">
+            <button id="lobby-btn-join-room" class="lobby-button w-full">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                </svg>
+                Entrar como Jogador 2
+            </button>
+        </div>
+
+        <p id="lobby-message-area" class="error-message text-sm text-center mt-6"></p>
+
+        <div class="mt-10 text-center">
+            <button id="lobby-btn-back-to-menu" class="lobby-button lobby-button-secondary w-full max-w-xs mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Voltar ao Menu Principal
+            </button>
+        </div>
+    </div>
+
+    <script src="lobby.js" defer></script>
+</body>
+</html>

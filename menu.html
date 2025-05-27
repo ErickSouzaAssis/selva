@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Principal - Selva! Guerra Estratégica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('img/guerraselva.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+        .menu-container {
+            min-width: 100%;
+            background-color: rgba(244, 236, 236, 0);
+            backdrop-filter: blur(2px);
+        }
+        .menu-button {
+            background-color: transparent;
+            color: #33ff00;
+            margin: 5px 0;
+            padding: 10px 15px; /* Added padding for better click area */
+            border-radius: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        .menu-button:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        .menu-button#btn-sair {
+            background-color: transparent;
+        }
+        .menu-button#btn-sair:hover {
+            background-color: rgba(220, 38, 38, 0.3);
+        }
+        .popup-hidden {
+            display: none !important;
+        }
+        .popup-overlay {
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed; /* Garante que o popup cubra toda a tela */
+            top: 0;
+            left: 0;
+        }
+        .popup-content {
+            max-height: 90vh;
+            overflow-y: auto;
+            background-color: #204030d0; /* Slightly more opaque for readability */
+            color: #e5ebe7;
+            padding: 20px; /* Consistent padding */
+            border-radius: 8px; /* Consistent border-radius */
+        }
+        .popup-content-wide { /* For Load Game popup */
+             max-width: 900px; /* Wider for table */
+        }
+        .popup-input, .popup-select {
+            width: 100%;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            border: 1px solid #4b6351;
+            border-radius: 4px;
+            background-color: #374151;
+            color: #b9f0c4;
+            box-sizing: border-box;
+        }
+        .popup-input::placeholder {
+            color: #9cafa0;
+        }
+        .popup-input:focus, .popup-select:focus {
+            outline: none;
+            border-color: #33ff00;
+            box-shadow: 0 0 0 2px rgba(51, 255, 0, 0.4);
+        }
+        .popup-button { /* Generic popup button style */
+            color: white;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 5px;
+            width: 100%;
+            text-align: center;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            border: none; /* Garante que não haja borda padrão do navegador */
+        }
+        .popup-button-primary {
+             background-color: #16a34a; /* Green */
+        }
+        .popup-button-primary:hover:not(:disabled) {
+             background-color: #15803d;
+        }
+        .popup-button-secondary { /* For less prominent actions like close or delete */
+            background-color: #4b5563; /* Gray */
+        }
+        .popup-button-secondary:hover:not(:disabled) {
+            background-color: #374151;
+        }
+        .popup-button-danger { /* For delete actions and occupied slots */
+            background-color: #dc2626; /* Red */
+        }
+        .popup-button-danger:hover:not(:disabled) {
+            background-color: #b91c1c;
+        }
+        .popup-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .campaign-phase-banner {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 0.25rem;
+            margin-bottom: 1rem;
+            background-color: #374151;
+        }
+        .campaign-map-preview {
+            width: 150px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 0.25rem;
+            background-color: #374151;
+        }
+        .campaign-section-label {
+            font-size: 0.75rem;
+            color: #a0aec0;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+        .popup-select option:disabled {
+            color: #718096;
+            background-color: #2d3748;
+        }
+        /* Load Game Table Styles */
+        .load-game-table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .load-game-table th, .load-game-table td {
+            border: 1px solid #4b6351;
+            padding: 6px 8px;
+            text-align: left;
+        }
+        .load-game-table th {
+            background-color: #374151;
+            color: #b9f0c4;
+            font-weight: bold;
+        }
+        .load-game-table td {
+            color: #e5ebe7;
+        }
+        .load-game-table .action-buttons button {
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            margin-right: 5px;
+            min-width: 60px;
+            width: auto; /* Allow button to size to content */
+        }
+        .load-game-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+         .load-game-table tr.empty-slot td {
+            color: #6b7280; /* Dimmer text for empty slots */
+            font-style: italic;
+        }
+        .btn-close-popup { /* Estilo para o 'x' de fechar popups */
+            position: absolute;
+            top: 0.75rem;
+            right: 1rem;
+            color: #9ca3af;
+            font-size: 1.875rem;
+            line-height: 1;
+            font-weight: bold;
+            transition: color 0.2s;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+        .btn-close-popup:hover {
+            color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen text-white">
+
+    <div class="mb-10 text-center">
+        <img src="img/NOVA LOGO2.png" alt="Logo Selva! Guerra Estratégica" class="mx-auto h-44 w-44 mb-2">
+    </div>
+
+    <div class="menu-container p-8 rounded-lg shadow-2xl w-full max-w-xs md:max-w-sm">
+        <nav class="flex flex-col">
+            <button id="btn-campanha" class="menu-button">Campanha</button>
+            <button id="btn-multiplayer" class="menu-button">Multiplayer</button> <button id="btn-load-game" class="menu-button">Carregar Jogo</button>
+            <button id="btn-arsenal" class="menu-button">Arsenal</button>
+            <button id="btn-configuracao" class="menu-button">Configuração</button>
+            <button id="btn-sair" class="menu-button mt-6">Sair</button>
+        </nav>
+    </div>
+
+    <div id="popup-campanha" class="popup-hidden fixed inset-0 popup-overlay p-4 z-50">
+        <div class="popup-content p-6 rounded-lg shadow-xl w-full max-w-xl relative">
+            <button class="btn-close-popup" data-popup-id="popup-campanha">×</button>
+            <h2 class="text-xl font-bold mb-4 text-center">INICIAR CAMPANHA</h2>
+            
+            <div class="mb-4">
+                <label for="campanha-select-phase" class="campaign-section-label block">MISSÃO:</label>
+                <select id="campanha-select-phase" class="popup-select">
+                    </select>
+            </div>
+
+            <img id="campanha-phase-banner-img" src="img/placeholder_banner_geral.png" alt="Banner da Missão" class="campaign-phase-banner">
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="campaign-section-label block">MAPA:</label>
+                    <img id="campanha-map-preview-img" src="img/placeholder_map_geral.png" alt="Preview do Mapa" class="campaign-map-preview">
+                </div>
+                <div>
+                    <label class="campaign-section-label block">OBJETIVO:</label>
+                    <div id="campanha-objective-text" class="text-xs p-2 bg-gray-700 rounded h-[100px] overflow-y-auto">
+                        Selecione uma missão para ver o objetivo.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="campaign-section-label block">MODO DE JOGO:</label>
+                    <input type="text" value="CAMPANHA - HISTÓRIA" class="popup-input bg-gray-600" readonly>
+                </div>
+                <div>
+                    <label for="campanha-difficulty" class="campaign-section-label block">DIFICULDADE:</label>
+                    <select id="campanha-difficulty" class="popup-select">
+                        <option value="Fácil">War Game</option>
+                        <option value="Médio" selected>Simulação</option>
+                        <option value="Difícil">Campanha</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="campanha-player-name" class="block text-sm font-medium mb-1">Nome do Jogador:</label>
+                <input type="text" id="campanha-player-name" class="popup-input" placeholder="Ex: GeneralSilva">
+            </div>
+            
+            <div class="mb-4">
+                <label for="campanha-country" class="block text-sm font-medium mb-1">Seu País:</label>
+                <select id="campanha-country" class="popup-select">
+                    <option value="BRASIL" selected>Brasil</option>
+                    <option value="VENEZUELA">Venezuela</option>
+                </select>
+            </div>
+            
+            <button id="start-campanha-btn" class="popup-button popup-button-primary mt-2">Iniciar Missão</button>
+        </div>
+    </div>
+
+    <div id="popup-multiplayer-type-selector" class="popup-hidden fixed inset-0 popup-overlay p-4 z-50">
+        <div class="popup-content p-8 rounded-lg shadow-xl w-full max-w-sm relative">
+            <button class="btn-close-popup" data-popup-id="popup-multiplayer-type-selector">×</button>
+            <h2 class="text-2xl font-bold mb-6 text-center">Escolha o Modo Multiplayer</h2>
+            <div class="space-y-3">
+                <button id="btn-select-local-multiplayer" class="popup-button popup-button-primary w-full">Multiplayer Local</button>
+                <button id="btn-select-online-multiplayer" class="popup-button popup-button-primary w-full">Multiplayer Online</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup-versus" class="popup-hidden fixed inset-0 popup-overlay p-4 z-50">
+        <div class="popup-content p-8 rounded-lg shadow-xl w-full max-w-lg relative">
+            <button class="btn-close-popup" data-popup-id="popup-versus">×</button>
+            <h2 class="text-2xl font-bold mb-6 text-center">Configurar Multiplayer Local</h2>
+            
+            <label for="versus-player1-name" class="block text-sm font-medium mb-1">Nome Jogador 1:</label>
+            <input type="text" id="versus-player1-name" class="popup-input" placeholder="Ex: PlayerUm">
+            
+            <label for="versus-player1-country" class="block text-sm font-medium mb-1">País Jogador 1:</label>
+            <select id="versus-player1-country" class="popup-select">
+                <option value="BRASIL" selected>Brasil</option>
+                <option value="VENEZUELA">Venezuela</option>
+            </select>
+
+            <label for="versus-player2-name" class="block text-sm font-medium mb-1 mt-3">Nome Jogador 2:</label>
+            <input type="text" id="versus-player2-name" class="popup-input" placeholder="Ex: PlayerDois">
+            
+            <button id="start-versus-local-btn" class="popup-button popup-button-primary mt-4">Iniciar Jogo Local</button>
+            </div>
+    </div>
+
+    <div id="popup-load-game" class="popup-hidden fixed inset-0 popup-overlay p-4 z-50">
+        <div class="popup-content popup-content-wide p-6 rounded-lg shadow-xl w-full relative">
+            <button class="btn-close-popup" data-popup-id="popup-load-game">×</button>
+            <h2 class="text-xl font-bold mb-4 text-center">CARREGAR JOGO SALVO</h2>
+            <div class="overflow-x-auto">
+                <table class="load-game-table">
+                    <thead>
+                        <tr>
+                            <th>Slot</th>
+                            <th>ID da Partida/Missão</th>
+                            <th>Modo</th>
+                            <th>Jogador(es)</th>
+                            <th>País Atual</th>
+                            <th>Turno</th>
+                            <th>Data Salva</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="load-game-table-body">
+                        </tbody>
+                </table>
+            </div>
+            <p id="no-saved-games-message" class="text-center text-gray-400 mt-6 hidden">Nenhum jogo salvo encontrado.</p>
+        </div>
+    </div>
+
+    <div id="popup-arsenal" class="popup-hidden fixed inset-0 popup-overlay flex items-center justify-center p-4 z-50">
+         <div class="popup-content p-8 rounded-lg shadow-xl w-full max-w-lg relative">
+            <button class="btn-close-popup" data-popup-id="popup-arsenal">×</button>
+            <h2 class="text-2xl font-bold mb-6 text-center"> Arsenal</h2>
+            <p class="text-center">Personalize seu comandante ou unidade especial.</p>
+            <p class="text-center text-yellow-400 mt-4">(Funcionalidade em desenvolvimento)</p>
+            <button class="popup-button popup-button-secondary mt-6 w-full opacity-50 cursor-not-allowed" disabled>Salvar Personagem</button>
+        </div>
+    </div>
+
+    <div id="popup-configuracao" class="popup-hidden fixed inset-0 popup-overlay flex items-center justify-center p-4 z-50">
+        <div class="popup-content p-8 rounded-lg shadow-xl w-full max-w-lg relative">
+            <button class="btn-close-popup" data-popup-id="popup-configuracao">×</button>
+            <h2 class="text-2xl font-bold mb-6 text-center">Configurações</h2>
+            <p class="text-center">Ajuste opções de áudio, vídeo, controles, etc.</p>
+            <p class="text-center text-yellow-400 mt-4">(Funcionalidade em desenvolvimento)</p>
+            <button class="popup-button popup-button-secondary mt-6 w-full opacity-50 cursor-not-allowed" disabled>Salvar Configurações</button>
+        </div>
+    </div>
+
+    <div id="popup-select-save-slot" class="popup-hidden fixed inset-0 popup-overlay p-4 z-50">
+        <div class="popup-content p-6 rounded-lg shadow-xl w-full max-w-md relative">
+            <button class="btn-close-popup" data-popup-id="popup-select-save-slot">×</button>
+            <h2 class="text-xl font-bold mb-4 text-center">ESCOLHER SLOT PARA NOVO JOGO</h2>
+            <p class="text-sm text-gray-300 mb-4 text-center">Selecione um slot para salvar este novo jogo. Se o slot estiver ocupado, você será perguntado se deseja sobrescrevê-lo.</p>
+            <div id="new-game-slot-selection-container" class="space-y-3">
+                </div>
+            <p id="new-game-slot-message" class="text-xs text-yellow-400 mt-3 text-center hidden"></p>
+        </div>
+    </div>
+
+    <audio id="menu-background-music" loop>
+        <source src="audio/musica_fundo.mp3" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <script>
+        // Manter os popupTriggers originais, exceto o de 'btn-versus'
+        const popupTriggers = {
+            'btn-campanha': 'popup-campanha',
+            // 'btn-versus' foi removido daqui, será tratado separadamente
+            'btn-load-game': 'popup-load-game',
+            'btn-arsenal': 'popup-arsenal',
+            'btn-configuracao': 'popup-configuracao'
+        };
+        const campaignPhases = [ /* ... seu array campaignPhases ... */
+            {
+                id: "tempestade_fronteira",
+                name: "Tempestade na Fronteira",
+                mapName: "mapa_roraima",
+                bannerSrc: "img/missoes/9.png",
+                mapPreviewSrc: "img/map_roraima_preview.png",
+                objectiveText: "Após um confronto inicial, as forças inimigas recuaram para posições defensivas. Avance, estabeleça uma cabeça de ponte e neutralize as defesas antiaéreas inimigas para permitir o avanço das nossas tropas.",
+                available: true
+            },
+            {
+                id: "olho_furacao",
+                name: "No Olho do Furacão",
+                mapName: "mapa_area_urbana_critica",
+                bannerSrc: "img/missoes/12.png",
+                mapPreviewSrc: "img/placeholder_map_furacao.png",
+                objectiveText: "Informações sobre esta missão ainda estão bloqueadas. Conclua missões anteriores para desbloquear.",
+                available: true
+            },
+            {
+                id: "boa_vista",
+                name: "Boa Vista",
+                mapName: "mapa_boa_vista",
+                bannerSrc: "img/missoes/10.png",
+                mapPreviewSrc: "img/placeholder_map_boavista.png",
+                objectiveText: "A capital está sob cerco. Defenda os pontos estratégicos e expulse as forças invasoras da cidade.",
+                available: true
+            },
+            {
+                id: "cuica_faminto",
+                name: "Cuíca Faminto",
+                mapName: "mapa_selva_cuica",
+                bannerSrc: "img/missoes/8.png",
+                mapPreviewSrc: "img/placeholder_map_cuica.png",
+                objectiveText: "Uma unidade de elite inimiga, codinome 'Cuíca Faminto', está causando estragos em nossas linhas de suprimento. Localize e neutralize esta ameaça.",
+                available: true
+            },
+            {
+                id: "apocalipse_americano",
+                name: "Apocalipse Americano",
+                mapName: "mapa_base_inimiga_final",
+                bannerSrc: "img/missoes/11.png",
+                mapPreviewSrc: "img/placeholder_map_apocalipse.png",
+                objectiveText: "A ofensiva final. Invada o quartel-general inimigo e capture ou neutralize o líder adversário para acabar com a guerra.",
+                available: true
+            }
+        ];
+
+
+        function showPopup(popupId) {
+            const popup = document.getElementById(popupId);
+            if (popup) {
+                document.querySelectorAll('.popup-overlay:not(.popup-hidden)').forEach(p => {
+                    if (p.id !== popupId) hidePopup(p.id);
+                });
+                popup.classList.remove('popup-hidden');
+                if (popupId === 'popup-campanha') {
+                    updateCampaignPhaseDetails();
+                }
+                if (popupId === 'popup-load-game') {
+                    populateLoadGameTable();
+                }
+            }
+        }
+
+        function hidePopup(popupId) {
+            const popup = document.getElementById(popupId);
+            if (popup) popup.classList.add('popup-hidden');
+        }
+
+        // Listeners para os botões do menu principal (exceto multiplayer)
+        for (const btnId in popupTriggers) {
+            const button = document.getElementById(btnId);
+            const popupId = popupTriggers[btnId];
+            if (button) button.addEventListener('click', () => showPopup(popupId));
+        }
+
+        // Listeners para os botões de fechar popup (X)
+        document.querySelectorAll('.btn-close-popup').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const popupIdToClose = event.target.dataset.popupId;
+                if (popupIdToClose) {
+                    hidePopup(popupIdToClose);
+                } else { // Fallback se data-popup-id não estiver no botão, mas no pai
+                    const popupOverlay = event.target.closest('.popup-overlay');
+                    if (popupOverlay) hidePopup(popupOverlay.id);
+                }
+            });
+        });
+        
+        // Fechar popup clicando fora do conteúdo
+        document.querySelectorAll('.popup-overlay').forEach(popupOverlay => {
+            popupOverlay.addEventListener('click', (event) => {
+                if (event.target === popupOverlay) {
+                    hidePopup(popupOverlay.id);
+                }
+            });
+        });
+        
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                const visiblePopups = document.querySelectorAll('.popup-overlay:not(.popup-hidden)');
+                if (visiblePopups.length > 0) {
+                    hidePopup(visiblePopups[visiblePopups.length - 1].id);
+                }
+            }
+        });
+
+        // Botão Sair
+        const btnSair = document.getElementById('btn-sair');
+        if (btnSair) {
+            btnSair.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+        }
+
+        // --- LÓGICA PARA O NOVO FLUXO DE MULTIPLAYER ---
+        const btnMultiplayerMenu = document.getElementById('btn-multiplayer'); // Botão principal "Multiplayer"
+        const popupMultiplayerTypeSelector = document.getElementById('popup-multiplayer-type-selector');
+        const btnSelectLocalMultiplayer = document.getElementById('btn-select-local-multiplayer');
+        const btnSelectOnlineMultiplayer = document.getElementById('btn-select-online-multiplayer');
+        const popupVersus = document.getElementById('popup-versus'); // Popup de config. local
+
+        if (btnMultiplayerMenu) {
+            btnMultiplayerMenu.addEventListener('click', () => {
+                showPopup('popup-multiplayer-type-selector');
+            });
+        }
+
+        if (btnSelectLocalMultiplayer) {
+            btnSelectLocalMultiplayer.addEventListener('click', () => {
+                hidePopup('popup-multiplayer-type-selector');
+                showPopup('popup-versus'); // Mostra o popup de configuração do Versus Local
+            });
+        }
+
+        if (btnSelectOnlineMultiplayer) {
+            btnSelectOnlineMultiplayer.addEventListener('click', () => {
+                // Redireciona para a nova página de lobby online
+                window.location.href = 'lobby.html'; // Ou o nome que você deu para a página de lobby
+            });
+        }
+        // --- FIM DA NOVA LÓGICA DE MULTIPLAYER ---
+
+
+        const campaignPhaseSelect = document.getElementById('campanha-select-phase');
+        const campaignBannerImg = document.getElementById('campanha-phase-banner-img');
+        const campaignMapPreviewImg = document.getElementById('campanha-map-preview-img');
+        const campaignObjectiveText = document.getElementById('campanha-objective-text');
+        const startCampanhaBtn = document.getElementById('start-campanha-btn');
+
+        function populateCampaignPhaseDropdown() { /* ... sua função existente ... */
+            if (!campaignPhaseSelect) return;
+            campaignPhaseSelect.innerHTML = '';
+            campaignPhases.forEach(phase => {
+                const option = document.createElement('option');
+                option.value = phase.id;
+                option.textContent = phase.name + (phase.available ? "" : " (Indisponível)");
+                option.disabled = !phase.available;
+                campaignPhaseSelect.appendChild(option);
+            });
+        }
+
+        function updateCampaignPhaseDetails() { /* ... sua função existente ... */
+            if (!campaignPhaseSelect || !campaignBannerImg || !campaignMapPreviewImg || !campaignObjectiveText || !startCampanhaBtn) return;
+            const selectedPhaseId = campaignPhaseSelect.value;
+            const selectedPhase = campaignPhases.find(p => p.id === selectedPhaseId);
+            if (selectedPhase) {
+                campaignBannerImg.src = selectedPhase.bannerSrc;
+                campaignBannerImg.alt = `Banner da Missão: ${selectedPhase.name}`;
+                campaignMapPreviewImg.src = selectedPhase.mapPreviewSrc;
+                campaignMapPreviewImg.alt = `Mapa da Missão: ${selectedPhase.name}`;
+                campaignObjectiveText.textContent = selectedPhase.objectiveText;
+                startCampanhaBtn.disabled = !selectedPhase.available;
+                startCampanhaBtn.title = selectedPhase.available ? "" : "Esta missão está indisponível no momento.";
+            } else {
+                campaignBannerImg.src = "img/placeholder_banner_geral.png";
+                campaignMapPreviewImg.src = "img/placeholder_map_geral.png";
+                campaignObjectiveText.textContent = "Selecione uma missão para ver os detalhes.";
+                startCampanhaBtn.disabled = true;
+                startCampanhaBtn.title = "Selecione uma missão válida.";
+            }
+        }
+
+
+        if (campaignPhaseSelect) {
+            campaignPhaseSelect.addEventListener('change', updateCampaignPhaseDetails);
+        }
+        
+        const MAX_SAVE_SLOTS = 5;
+        const SAVE_SLOTS_KEY = 'selvaGameSaveSlots';
+        let newGameSetupInfo = null; 
+
+        function getSavedGames() { /* ... sua função existente ... */
+            const savedGamesRaw = localStorage.getItem(SAVE_SLOTS_KEY);
+            if (savedGamesRaw) {
+                try {
+                    const parsed = JSON.parse(savedGamesRaw);
+                    if (Array.isArray(parsed)) {
+                        if (parsed.length === MAX_SAVE_SLOTS) return parsed;
+                        const resizedArray = Array(MAX_SAVE_SLOTS).fill(null);
+                        for (let i = 0; i < Math.min(parsed.length, MAX_SAVE_SLOTS); i++) {
+                            resizedArray[i] = parsed[i];
+                        }
+                        return resizedArray;
+                    }
+                    return Array(MAX_SAVE_SLOTS).fill(null);
+                } catch (e) {
+                    console.error("Erro ao ler jogos salvos:", e);
+                    return Array(MAX_SAVE_SLOTS).fill(null);
+                }
+            }
+            return Array(MAX_SAVE_SLOTS).fill(null);
+        }
+
+
+        function populateNewGameSlotSelector() { /* ... sua função existente ... */
+            const container = document.getElementById('new-game-slot-selection-container');
+            const messageEl = document.getElementById('new-game-slot-message');
+            if (!container || !messageEl) return;
+            container.innerHTML = '';
+            messageEl.classList.add('hidden');
+            const savedGames = getSavedGames();
+            for (let i = 0; i < MAX_SAVE_SLOTS; i++) {
+                const slotData = savedGames[i];
+                const slotButton = document.createElement('button');
+                slotButton.classList.add('popup-button', 'w-full', 'mb-2', 'text-sm');
+                let slotText = `SLOT ${i + 1}: `;
+                if (slotData && slotData.mapFile) {
+                    slotButton.classList.add('popup-button-danger');
+                    slotText += `OCUPADO - ${slotData.gameMode || 'Jogo Salvo'} (Turno ${slotData.currentTurn || 'N/A'})`;
+                    slotButton.title = `Sobrescrever ${slotData.gameMode || 'jogo'} de ${slotData.currentPlayerName || 'Jogador Desconhecido'}?`;
+                } else {
+                    slotButton.classList.add('popup-button-primary');
+                    slotText += 'VAZIO';
+                    slotButton.title = `Salvar novo jogo no Slot ${i + 1}`;
+                }
+                slotButton.textContent = slotText;
+                slotButton.dataset.slotIndex = i;
+                slotButton.onclick = () => {
+                    confirmStartNewGameInSlot(i, slotData);
+                };
+                container.appendChild(slotButton);
+            }
+        }
+
+
+        function confirmStartNewGameInSlot(slotIndex, existingSlotData) { /* ... sua função existente ... */
+            if (!newGameSetupInfo) {
+                console.error("Nenhuma configuração de novo jogo para iniciar.");
+                alert("Erro: Informações do novo jogo não encontradas.");
+                hidePopup('popup-select-save-slot');
+                return;
+            }
+            const startAction = () => {
+                console.log(`Iniciando novo jogo no Slot ${slotIndex + 1}. Config:`, newGameSetupInfo);
+                localStorage.setItem('gameSetupInfo', JSON.stringify(newGameSetupInfo)); // Para jogos locais/campanha
+                localStorage.setItem('selectedNewGameSlot', slotIndex.toString());
+                localStorage.removeItem('loadedGameStateFromSlot');
+                let currentSavedGames = getSavedGames();
+                currentSavedGames[slotIndex] = null;
+                localStorage.setItem(SAVE_SLOTS_KEY, JSON.stringify(currentSavedGames));
+                window.location.href = newGameSetupInfo.mapFile;
+            };
+            if (existingSlotData && existingSlotData.mapFile) {
+                if (confirm(`Slot ${slotIndex + 1} está ocupado por: ${existingSlotData.gameMode} (Turno ${existingSlotData.currentTurn}). Deseja sobrescrever e iniciar um novo jogo neste slot?`)) {
+                    startAction();
+                } else {
+                    const messageEl = document.getElementById('new-game-slot-message');
+                    if(messageEl) {
+                        messageEl.textContent = "Sobrescrita cancelada. Escolha outro slot ou confirme.";
+                        messageEl.classList.remove('hidden');
+                    }
+                }
+            } else {
+                startAction();
+            }
+        }
+
+
+        if (startCampanhaBtn) {
+            startCampanhaBtn.addEventListener('click', () => {
+                const playerName = document.getElementById('campanha-player-name').value || 'General Anônimo';
+                const difficulty = document.getElementById('campanha-difficulty').value;
+                const country = document.getElementById('campanha-country').value;
+                const selectedPhaseId = campaignPhaseSelect.value;
+                const selectedPhase = campaignPhases.find(p => p.id === selectedPhaseId);
+
+                if (!selectedPhase || !selectedPhase.available) { 
+                    alert("Por favor, selecione uma missão válida e disponível.");
+                    return;
+                }
+                
+                newGameSetupInfo = {
+                    gameMode: 'Campanha',
+                    player1Name: playerName,
+                    player1Country: country,
+                    difficulty: difficulty,
+                    currentPlayerName: playerName,
+                    currentPlayerCountry: country,
+                    currentTurn: "1",
+                    currentPhaseId: selectedPhase.id,
+                    mapFile: selectedPhase.mapName + ".html"
+                };
+                
+                hidePopup('popup-campanha');
+                populateNewGameSlotSelector();
+                showPopup('popup-select-save-slot');
+            });
+        }
+
+        // Botão "Iniciar Jogo Local" dentro do popup #popup-versus
+        const startVersusLocalSetupBtn = document.getElementById('start-versus-local-btn');
+        if (startVersusLocalSetupBtn) {
+            startVersusLocalSetupBtn.addEventListener('click', () => {
+                const player1Name = document.getElementById('versus-player1-name').value || 'Jogador 1';
+                const player1Country = document.getElementById('versus-player1-country').value;
+                const player2Name = document.getElementById('versus-player2-name').value || 'Jogador 2';
+                const player2Country = (player1Country === 'BRASIL') ? 'VENEZUELA' : 'BRASIL';
+
+                newGameSetupInfo = {
+                    gameMode: 'Versus Local',
+                    player1Name: player1Name,
+                    player1Country: player1Country,
+                    player2Name: player2Name,
+                    player2Country: player2Country,
+                    currentPlayerName: player1Name, 
+                    currentPlayerCountry: player1Country,
+                    currentTurn: "1",
+                    mapFile: "mapa_roraima.html" // Mapa padrão para versus local
+                };
+                hidePopup('popup-versus');
+                populateNewGameSlotSelector(); // Para escolher onde salvar este NOVO JOGO LOCAL
+                showPopup('popup-select-save-slot');
+            });
+        }
+
+
+        function populateLoadGameTable() { /* ... sua função existente ... */
+            const tableBody = document.getElementById('load-game-table-body');
+            const noGamesMessage = document.getElementById('no-saved-games-message');
+            if (!tableBody || !noGamesMessage) return;
+            tableBody.innerHTML = '';
+            const savedGames = getSavedGames();
+            let hasSavedGames = false;
+            for (let i = 0; i < MAX_SAVE_SLOTS; i++) {
+                const slotData = savedGames[i];
+                const row = tableBody.insertRow();
+                row.insertCell().textContent = i + 1;
+                if (slotData && slotData.mapFile) {
+                    hasSavedGames = true;
+                    row.insertCell().textContent = slotData.currentPhaseId || slotData.mapFile || 'N/A';
+                    row.insertCell().textContent = slotData.gameMode || 'N/A';
+                    let players = slotData.player1Name || 'N/A';
+                    if (slotData.gameMode === "Versus Local" && slotData.player2Name) {
+                        players += ` vs ${slotData.player2Name}`;
+                    }
+                    row.insertCell().textContent = players;
+                    row.insertCell().textContent = slotData.currentPlayerCountry || 'N/A';
+                    row.insertCell().textContent = slotData.currentTurn || 'N/A';
+                    row.insertCell().textContent = slotData.timestamp ? new Date(slotData.timestamp).toLocaleString('pt-BR') : 'N/A';
+                    const actionsCell = row.insertCell();
+                    actionsCell.classList.add('action-buttons');
+                    const loadButton = document.createElement('button');
+                    loadButton.textContent = 'Carregar';
+                    loadButton.classList.add('popup-button', 'popup-button-primary');
+                    loadButton.onclick = () => loadGameFromSlot(i);
+                    actionsCell.appendChild(loadButton);
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Deletar';
+                    deleteButton.classList.add('popup-button', 'popup-button-danger');
+                    deleteButton.onclick = () => deleteGameFromSlot(i);
+                    actionsCell.appendChild(deleteButton);
+                } else {
+                    row.classList.add('empty-slot');
+                    const emptyCell = row.insertCell();
+                    emptyCell.colSpan = 6;
+                    emptyCell.textContent = 'Slot Vazio';
+                    row.insertCell();
+                }
+            }
+            noGamesMessage.style.display = hasSavedGames ? 'none' : 'block';
+        }
+
+
+        function loadGameFromSlot(slotIndex) { /* ... sua função existente ... */
+            const savedGames = getSavedGames();
+            const gameToLoad = savedGames[slotIndex];
+            if (gameToLoad && gameToLoad.mapFile) {
+                console.log(`Carregando jogo do slot ${slotIndex + 1}:`, gameToLoad);
+                localStorage.setItem('loadedGameStateFromSlot', JSON.stringify(gameToLoad)); // Para carregar um jogo salvo LOCALMENTE
+                localStorage.removeItem('gameSetupInfo'); // Não é um novo jogo
+                localStorage.removeItem('selectedNewGameSlot');
+                const mapFile = gameToLoad.mapFile || (gameToLoad.currentPhaseId ? campaignPhases.find(p => p.id === gameToLoad.currentPhaseId)?.mapName + ".html" : "mapa_roraima.html");
+                window.location.href = mapFile;
+            } else {
+                alert("Slot de salvamento inválido ou vazio.");
+            }
+        }
+
+
+        function deleteGameFromSlot(slotIndex) { /* ... sua função existente ... */
+            if (confirm(`Tem certeza que deseja deletar o jogo salvo no Slot ${slotIndex + 1}? Esta ação não pode ser desfeita.`)) {
+                let savedGames = getSavedGames();
+                savedGames[slotIndex] = null;
+                localStorage.setItem(SAVE_SLOTS_KEY, JSON.stringify(savedGames));
+                populateLoadGameTable();
+                alert(`Jogo salvo no Slot ${slotIndex + 1} deletado.`);
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateCampaignPhaseDropdown();
+            const firstAvailablePhase = campaignPhases.find(p => p.available);
+            if (firstAvailablePhase && campaignPhaseSelect) {
+                 campaignPhaseSelect.value = firstAvailablePhase.id;
+            }
+            updateCampaignPhaseDetails();
+
+            const menuMusic = document.getElementById('menu-background-music');
+            if (menuMusic) {
+                menuMusic.volume = 0.3;
+            }
+        });
+    </script>
+</body>
+</html>

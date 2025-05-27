@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selva! Guerra Estratégica - Partida</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
+</head>
+<body>
+    <div id="app-container" class="flex w-full h-full relative">
+
+        <div id="game-board-wrapper" class="flex-grow h-full relative overflow-hidden">
+            <div id="game-board" class="w-full h-full cursor-grab relative overflow-hidden">
+                <div id="grid-container" class="transform-origin-0-0 relative w-fit m-0 z-1">
+                    </div>
+                <div id="info-popup" class="hidden absolute bg-white border border-black p-2 rounded shadow-lg text-xs z-50 pointer-events-none">
+                    </div>
+            </div>
+
+            <div id="zoom-controls" class="absolute bottom-5 left-5 z-20 flex gap-2">
+                <button id="zoom-in-button" title="Aproximar" class="bg-gray-700 hover:bg-gray-600 text-white font-bold w-9 h-9 text-lg rounded-full shadow-md">+</button>
+                <button id="zoom-out-button" title="Afastar" class="bg-gray-700 hover:bg-gray-600 text-white font-bold w-9 h-9 text-lg rounded-full shadow-md">-</button>
+                <button id="reset-view-button" title="Resetar Vista" class="bg-gray-700 hover:bg-gray-600 text-white font-bold w-9 h-9 text-lg rounded-full shadow-md">R</button>
+                <button id="rotate-left-button" title="Girar Esquerda" class="bg-gray-700 hover:bg-gray-600 text-white font-bold w-9 h-9 text-lg rounded-full shadow-md">↶</button> <button id="rotate-right-button" title="Girar Direita" class="bg-gray-700 hover:bg-gray-600 text-white font-bold w-9 h-9 text-lg rounded-full shadow-md">↷</button> </div>
+
+            <div id="on-screen-game-info" class="absolute top-5 left-5 z-20" style="display: none;">
+                </div>
+        </div>
+
+        <div id="game-sidebar">
+            <div id="icon-action-bar">
+                <button class="icon-bar-button" id="icon-status-turn" title="Status e Turno">
+                    <img src="Img/icones/svg/indicadores.svg" alt="Status/Turno">
+                </button>
+                <button class="icon-bar-button active-icon-bar-button" id="icon-play" title="Jogar (Recursos/Ativos)">
+                    <img src="Img/icones/svg/ativos.svg" alt="Jogar/Ativos">
+                </button>
+                <button class="icon-bar-button" id="icon-terrain-info" title="Informações do Terreno">
+                    <img src="Img/icones/svg/terreno.svg" alt="Terreno">
+                </button>
+                <button class="icon-bar-button" id="icon-help-config" title="Ajuda e Configurações">
+                    <img src="Img/icones/svg/extras.svg" alt="Extras/Ajuda">
+                </button>
+                <button class="icon-bar-button" id="icon-menu-story" title="Configurações">
+                    <img src="Img/icones/svg/configuracao.svg" alt="Configurações">
+                </button>
+            </div>
+
+            <div id="sidebar-main-content">
+                <div id="status-turn-section" class="sidebar-section flex-grow overflow-y-auto hidden">
+                    <div class="mb-4 pb-3 border-b border-gray-700">
+                        <h3 class="text-center sidebar-section-title">INFO DA PARTIDA</h3>
+                        <div class="mt-2 space-y-1 px-2">
+                            <p class="sidebar-info-text">
+                                <strong class="sidebar-info-label">Jogador Atual:</strong>
+                                <span id="sidebar-current-player-name-display" class="sidebar-info-value">--</span>
+                                <img id="sidebar-player-country-flag" src="img/flags/brasil.svg" alt="Bandeira" class="inline-block h-4 w-6 ml-2 align-middle rounded-sm object-cover">
+                            </p>
+                            <p class="sidebar-info-text">
+                                <strong class="sidebar-info-label">País:</strong>
+                                <span id="sidebar-current-player-country-display" class="sidebar-info-value">--</span>
+                            </p>
+                            <p class="sidebar-info-text">
+                                <strong class="sidebar-info-label">Turno:</strong>
+                                <span id="sidebar-game-turn-display" class="sidebar-info-value">1</span>
+                            </p>
+                            <p class="sidebar-info-text" id="sidebar-difficulty-paragraph" style="display: none;">
+                                <strong class="sidebar-info-label">Dificuldade:</strong>
+                                <span id="sidebar-game-difficulty-display" class="sidebar-info-value">--</span>
+                            </p>
+                        </div>
+                        <div id="sidebar-turn-controls" class="mt-4 pt-3 border-t border-gray-600 px-2">
+                            <button id="sidebar-btn-end-turn"
+                                    class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-3 rounded shadow-sm transition ease-in-out duration-150 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-sm tracking-wider">
+                                Passar Turno
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 pb-3 border-b border-gray-700">
+                        <h4 class="text-center text-gray-400 uppercase text-sm font-semibold mb-2 sidebar-subsection-title">Status do Combate</h4>
+                        <p class="text-xs text-gray-500 text-center px-2">(Detalhes gráficos de tropas abatidas, disponíveis, etc. - Em breve)</p>
+                    </div>
+
+                    <div id="destruction-video-display-area">
+                        <h4 class="text-center text-gray-400 uppercase text-sm font-semibold mt-3 mb-2 sidebar-subsection-title">Histórico de Ações</h4>
+                        <div id="video-player-container" class="w-full aspect-video bg-black rounded hidden mx-auto" style="max-width: 280px;">
+                            <video id="destruction-video-player" width="100%" height="auto" controls>
+                                Seu navegador não suporta o elemento de vídeo.
+                            </video>
+                        </div>
+                        <p id="destruction-video-placeholder" class="text-xs text-gray-500 text-center px-2 py-4">
+                            Nenhuma ação de combate recente para exibir.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="selected-asset-info" class="sidebar-section flex-grow overflow-y-auto">
+                    <h3 class="sidebar-section-title">ATIVO SELECIONADO</h3>
+                    <div id="selected-asset-placeholder" class="text-center py-10 text-gray-500" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <p>Nenhuma unidade selecionada no mapa.</p>
+                        <p class="text-sm mt-1">Clique em uma unidade no mapa para ver seus detalhes.</p>
+                    </div>
+                    <div id="selected-asset-details" class="hidden"> <div class="asset-details-action-buttons mb-3 toggle-button-group flex justify-center gap-3">
+                            <div class="action-switch-container" id="offensive-mode-control-wrapper">
+                                <label for="offensive-mode-checkbox" class="action-switch-text-label">Modo Ataque</label>
+                                <label class="switch-visual-control">
+                                    <input type="checkbox" id="offensive-mode-checkbox">
+                                    <span class="switch-slider round"></span>
+                                </label>
+                            </div>
+                            <button id="btn-show-range-mov">Alcance Mov.</button>
+                        </div>
+                        <div class="asset-details-layout">
+                            <div class="asset-image-column">
+                                <img id="unit-info-image" src="https://placehold.co/240x180/1f2937/9ca3af?text=Unidade" alt="Imagem da Unidade"
+                                     class="w-full h-auto object-contain rounded">
+                            </div>
+                            <div class="asset-info-column">
+                                <h4 id="unit-info-name" class="text-lg font-semibold mb-1">Nome da Unidade</h4>
+                                <p><strong>Instância:</strong> <span id="unit-info-instance-id">--</span></p>
+                                <p><strong>País:</strong> <span id="unit-info-pais">--</span></p>
+                                <p><strong>P. Fogo:</strong> <span id="unit-info-attack">--</span></p>
+                                <p><strong>Blind.:</strong> <span id="unit-info-health">--</span></p>
+                                <p><strong>Mov.:</strong> <span id="unit-info-movement">--</span></p>
+                                <p><strong>Alcance:</strong> <span id="unit-info-range">--</span></p>
+                                <p><strong>Esquadras Disp.:</strong> <span id="unit-info-squad-count">--</span></p>
+                                <p><strong>Custo OP:</strong> <span id="unit-info-custoop">--</span></p>
+                                <p><strong>Valor:</strong> <span id="unit-info-valor">--</span></p>
+                                <p class="mt-1 text-xs leading-tight"><strong>OBS:</strong><br><span id="unit-info-description">--</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="selected-terrain-info" class="sidebar-section flex-grow overflow-y-auto hidden">
+                     <h3 class="sidebar-section-title">TERRENO SELECIONADO</h3>
+                     <div id="selected-terrain-placeholder" class="text-center py-10 text-gray-500" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <p>Nenhum hexágono selecionado.</p>
+                        <p class="text-sm mt-1">Clique em um hexágono no mapa para ver detalhes do terreno.</p>
+                    </div>
+                    <div id="selected-terrain-details" class="hidden">
+                        <div class="asset-details-layout">
+                            <div class="asset-image-column">
+                                <img id="terrain-info-image" src="https://placehold.co/300x180/1f2937/9ca3af?text=Terreno" alt="Imagem do Terreno"
+                                     class="w-full h-auto object-contain rounded">
+                            </div>
+                            <div class="asset-info-column" style="opacity: 1; visibility: visible; position: static; transform: none; width: 100%; max-width: none; margin-top:10px; background-color: transparent; border: none; box-shadow: none;">
+                                <h4 id="terrain-info-name" class="text-lg font-semibold mb-1">Nome do Terreno</h4>
+                                <p id="terrain-info-description-text" class="text-xs leading-tight mb-2">Descrição detalhada...</p>
+                                <p><strong>Coord.:</strong> <span id="terrain-info-coord">--</span></p>
+                                <p><strong>Geografia:</strong> <span id="terrain-info-geografia">--</span></p>
+                                <p><strong>Custo Mov. (Base):</strong> <span id="terrain-info-custo-mov">--</span></p>
+                                <p><strong>Mod. Desloc. (Info):</strong> <span id="terrain-info-mod-desloc">--</span></p>
+                                <p><strong>Mod. Visib.:</strong> <span id="terrain-info-mod-visib">--</span></p>
+                                <p><strong>Mod. Alcance:</strong> <span id="terrain-info-mod-alcance">--</span></p>
+                                <p><strong>Domínio:</strong> <span id="terrain-info-dominio">--</span></p>
+                                <p class="mt-1 text-xs leading-tight"><strong>OBS:</strong><br><span id="terrain-info-obs">--</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="resource-section" class="sidebar-section flex flex-col">
+                     <h3 class="sidebar-section-title">RECURSOS</h3>
+                    <div class="filter-controls mb-4">
+                        <div class="mb-3">
+                            <label for="filter-forca-select" class="block text-xs font-medium mb-1">Força:</label>
+                            <select id="filter-forca-select" class="w-full p-2 rounded-md text-sm">
+                                <option value="todos">Todas as Forças</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="filter-categoria-select" class="block text-xs font-medium mb-1">Categoria:</label>
+                            <select id="filter-categoria-select" class="w-full p-2 rounded-md text-sm">
+                                <option value="todos">Todas as Categorias</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="resource-list" class="flex-grow">
+                        </div>
+                </div>
+
+                <div id="settings-section" class="sidebar-section flex-grow overflow-y-auto hidden">
+                     <h3 class="sidebar-section-title">CONFIGURAÇÕES</h3>
+                    <div class="space-y-4 p-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-300">Música</span>
+                            <div class="action-switch-container">
+                                <label class="switch-visual-control">
+                                    <input type="checkbox" id="setting-music-onoff">
+                                    <span class="switch-slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <label for="setting-music-volume" class="text-xs text-gray-400 w-16">Volume:</label>
+                            <input type="range" id="setting-music-volume" min="0" max="1" step="0.01" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500">
+                        </div>
+
+                        <div class="flex items-center justify-between pt-3 mt-3 border-t border-gray-700">
+                            <span class="text-sm text-gray-300">Efeitos Sonoros</span>
+                            <div class="action-switch-container">
+                                <label class="switch-visual-control">
+                                    <input type="checkbox" id="setting-sfx-onoff">
+                                    <span class="switch-slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 mt-3 border-t border-gray-700">
+                            <span class="text-sm text-gray-300">Animações de Morte</span>
+                            <div class="action-switch-container">
+                                <label class="switch-visual-control">
+                                    <input type="checkbox" id="setting-animation-onoff">
+                                    <span class="switch-slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 mt-3 border-t border-gray-700">
+                            </div>
+                    </div>
+                </div>
+
+            </div> </div> <button id="sidebar-toggle-button" title="Abrir Painel" class="fixed top-1/2 -translate-y-1/2 h-20 w-9 bg-gray-900 text-white text-2xl font-bold cursor-pointer transition-colors duration-200 ease hover:bg-gray-700 z-[1001] flex items-center justify-center rounded-l-md p-0 border-none">
+            </button>
+    </div> <div id="popup-game-over" class="popup-hidden fixed inset-0 popup-overlay p-4 z-[25000]" style="background-color: rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center;">
+        <div class="popup-content p-6 rounded-lg shadow-xl w-full max-w-lg relative text-center" style="background-color: #1f2937; color: #e5e7eb;">
+            <h2 id="game-over-title" class="text-3xl font-bold mb-5" style="color: #33ff00;">-- Título do Fim de Jogo --</h2>
+            
+            <div id="game-over-video-container" class="w-full aspect-video bg-black rounded mb-6 mx-auto shadow-lg" style="max-width: 480px;">
+                <video id="game-over-video-player" width="100%" height="auto" controls autoplay loop>
+                    Seu navegador não suporta o elemento de vídeo.
+                </video>
+            </div>
+            
+            <p id="game-over-message" class="text-lg mb-8" style="color: #c7d2fe;">-- Mensagem de Fim de Jogo --</p>
+            
+            <button id="btn-exit-to-menu" 
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded shadow-md transition ease-in-out duration-150 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 text-lg tracking-wider">
+                Sair para o Menu Principal
+            </button>
+        </div>
+    </div>
+
+    <audio id="background-music-player" loop>
+        <source src="audio/musica_fundo.mp3" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <canvas id="deathAnimationCanvas"></canvas>
+
+    <script src="game-logic.js"></script> 
+    <script src="map-controls.js"></script>
+    <script src="movement-logic.js"></script>
+    <script src="combat-logic.js"></script>
+    <script src="ui-layout.js"></script>       
+</body>
+</html>

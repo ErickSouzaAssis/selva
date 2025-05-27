@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ficha de Agente de Campo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e6f2e6;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2b472b;
+    }
+    .ficha {
+      max-width: 900px;
+      margin: auto;
+      background: #d9f2d9;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    select, input {
+      padding: 5px;
+      width: 100%;
+    }
+    .equipamento, .armas {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .slot {
+      flex: 1;
+    }
+    .peso-total {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ficha de Agente de Campo</h1>
+  <div class="ficha">
+    <label>Nome: <input type="text" /></label>
+    <label>Idade: <input type="number" /></label>
+    <label>Tropa: <input type="text" /></label>
+    <label>Posto: <input type="text" /></label>
+    <label>Especialização: <input type="text" /></label>
+
+    <div class="armas">
+      <div class="slot">
+        <label>Arma Principal:</label>
+        <select id="armaPrincipal" onchange="calcularPeso()">
+          <option value="0">Nenhuma</option>
+          <option value="3">M4A1 (3)</option>
+          <option value="3">HK416 (3)</option>
+          <option value="4">FN SCAR-L (4)</option>
+          <option value="5">M249 SAW (5)</option>
+        </select>
+      </div>
+      <div class="slot">
+        <label>Arma Secundária:</label>
+        <select id="armaSecundaria" onchange="calcularPeso()">
+          <option value="0">Nenhuma</option>
+          <option value="1">Glock 17 (1)</option>
+          <option value="1">Beretta M9 (1)</option>
+          <option value="2">Desert Eagle (2)</option>
+        </select>
+      </div>
+      <div class="slot">
+        <label>Faca:</label>
+        <select id="faca" onchange="calcularPeso()">
+          <option value="0">Nenhuma</option>
+          <option value="0.5">KA-BAR (0.5)</option>
+          <option value="0.5">Tomahawk (0.5)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="equipamento">
+      <div class="slot">
+        <label>Equipamento 1:</label>
+        <select onchange="calcularPeso()">
+          <option value="0">Nenhum</option>
+          <option value="1">Rádio (1)</option>
+          <option value="1">Kit Médico (1)</option>
+          <option value="0.5">Granada Fumaça (0.5)</option>
+          <option value="0.5">Granada Fragmentação (0.5)</option>
+          <option value="2">Visor Noturno (2)</option>
+        </select>
+      </div>
+      <div class="slot">
+        <label>Equipamento 2:</label>
+        <select onchange="calcularPeso()">
+          <option value="0">Nenhum</option>
+          <option value="1">Rádio (1)</option>
+          <option value="1">Kit Médico (1)</option>
+          <option value="0.5">Granada Fumaça (0.5)</option>
+          <option value="0.5">Granada Fragmentação (0.5)</option>
+          <option value="2">Visor Noturno (2)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="peso-total" id="pesoTotal">Peso Total: 0 / 10</div>
+  </div>
+
+  <script>
+    function calcularPeso() {
+      const selects = document.querySelectorAll('select');
+      let peso = 0;
+      selects.forEach(select => {
+        peso += parseFloat(select.value);
+      });
+      const maxPeso = 10;
+      const display = document.getElementById("pesoTotal");
+      display.innerText = `Peso Total: ${peso} / ${maxPeso}`;
+      display.style.color = peso > maxPeso ? 'red' : 'black';
+    }
+  </script>
+</body>
+</html>

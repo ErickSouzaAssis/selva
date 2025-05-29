@@ -8,46 +8,65 @@
     <link rel="stylesheet" href="style.css"> <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-image: url('img/guerraselva.jpeg'); /* Mesma imagem de fundo do menu */
+            background-image: url('img/guerraselva.jpeg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            min-height: 100vh; /* Garante que o fundo cubra toda a altura */
         }
-        .lobby-container {
-            background-color: rgba(30, 40, 35, 0.85);
+        .main-lobby-container { /* Container que centraliza todo o conteúdo do lobby */
+            background-color: rgba(30, 40, 35, 0.88); /* Um pouco mais opaco */
             backdrop-filter: blur(5px);
             border: 1px solid rgba(51, 255, 0, 0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
-        .lobby-title {
+        .lobby-page-title { /* Para o título "LOBBY MULTIPLAYER ONLINE" */
             color: #33ff00;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
+        .column-title { /* Para "CRIAR NOVA SALA" e "ENTRAR EM SALA EXISTENTE" */
+            color: #4ade80; /* Um verde um pouco mais suave para subtítulos */
+            border-bottom: 1px solid rgba(51, 255, 0, 0.3);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
         .lobby-button {
             background-color: #16a34a;
             color: white;
-            margin: 5px 0;
-            padding: 12px 18px;
-            border-radius: 8px;
+            margin-top: 0.5rem; /* Espaçamento entre botões e inputs */
+            padding: 10px 15px; /* Ajuste de padding */
+            border-radius: 6px; /* Levemente menos arredondado */
             font-weight: bold;
             text-transform: uppercase;
             transition: background-color 0.3s ease, transform 0.1s ease;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             border: none;
             cursor: pointer;
+            width: 100%; /* Botões ocupam a largura da coluna */
         }
-        .lobby-button:hover:not(:disabled) { /* Adicionado :not(:disabled) */
+        .lobby-button:hover:not(:disabled) {
             background-color: #15803d;
             transform: translateY(-1px);
         }
-        .lobby-button:disabled { /* Estilo para botão desabilitado */
-            opacity: 0.5;
+        .lobby-button:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
         }
-        .lobby-button-confirm { /* Estilo para o botão de confirmação, se quiser diferenciar */
-            background-color: #2563eb; /* Exemplo: Azul */
+        .lobby-button-confirm { /* Era azul, agora vamos estilizar para preto se necessário, ou usar join-custom */
+            /* Se quiser um estilo específico para este botão preto que não seja o join-custom */
+             background-color: black;
+             border: 1px solid #33ff00; /* Borda verde opcional */
         }
         .lobby-button-confirm:hover:not(:disabled) {
-            background-color: #1d4ed8;
+             background-color: #1a1a1a;
+        }
+        .lobby-button-join-custom {
+            background-color: black;
+            border: 1px solid #33ff00; 
+        }
+        .lobby-button-join-custom:hover:not(:disabled) {
+            background-color: #1a1a1a; 
+            border-color: #4ade80;
         }
         .lobby-button-secondary {
              background-color: #4b5563;
@@ -55,100 +74,158 @@
         .lobby-button-secondary:hover {
             background-color: #374151;
         }
-        .lobby-input {
+        .lobby-input, .lobby-select {
             width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 12px;
+            padding: 10px 12px;
+            margin-bottom: 0.75rem; /* 12px */
             border: 1px solid #4b6351;
             border-radius: 6px;
-            background-color: rgba(55, 65, 81, 0.8);
+            background-color: rgba(55, 65, 81, 0.9); /* Mais opaco */
             color: #e5e7eb;
             box-sizing: border-box;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         .lobby-input::placeholder {
             color: #9ca3af;
         }
-        .lobby-input:focus {
+        .lobby-input:focus, .lobby-select:focus {
             outline: none;
             border-color: #33ff00;
             box-shadow: 0 0 0 3px rgba(51, 255, 0, 0.3);
         }
         .room-id-display {
-            background-color: rgba(17, 24, 39, 0.7);
+            background-color: rgba(17, 24, 39, 0.8); /* Mais opaco */
             border: 1px dashed #33ff00;
             color: #e5e7eb;
-            padding: 10px;
+            padding: 8px 10px;
             border-radius: 6px;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 1.1rem;
+            font-size: 1rem; /* Pouco menor */
             letter-spacing: 1px;
-            min-height: 44px;
+            min-height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             word-break: break-all;
+            margin-top: 0.5rem;
         }
         .error-message {
             color: #f87171;
             min-height: 1.25rem;
+            margin-top: 0.5rem;
         }
-        .hidden { /* Classe para esconder elementos */
+        .hidden {
             display: none !important;
         }
+        .form-label {
+            display: block;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* medium */
+            margin-bottom: 0.25rem; /* mb-1 */
+            color: #cbd5e1; /* text-slate-300, um cinza mais claro */
+            text-align: left; /* ALINHADO À ESQUERDA */
+        }
+        .instructions-text {
+            font-size: 0.75rem; /* text-xs */
+            color: #94a3b8; /* text-slate-400 */
+            margin-top: 0.25rem;
+            text-align: left; /* ALINHADO À ESQUERDA */
+        }
+
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen text-gray-200 p-4">
+<body class="flex flex-col items-center justify-center min-h-screen text-gray-200 p-4 md:p-6">
 
-    <div class="lobby-container p-8 md:p-12 rounded-xl shadow-2xl w-full max-w-lg">
-        <div class="text-center mb-8">
-            <img src="img/NOVA LOGO2.png" alt="Logo Selva!" class="mx-auto h-28 w-28 md:h-36 md:w-36 mb-2">
-            <h1 class="lobby-title text-3xl md:text-4xl font-bold">LOBBY ONLINE</h1>
+    <div class="main-lobby-container p-6 md:p-10 rounded-xl shadow-2xl w-full max-w-3xl lg:max-w-4xl">
+        <div class="text-center mb-6 md:mb-8">
+            <img src="img/NOVA LOGO2.png" alt="Logo Selva!" class="mx-auto h-20 w-20 md:h-28 md:w-28 mb-1">
+            <h1 class="lobby-page-title text-2xl md:text-4xl font-bold">LOBBY MULTIPLAYER ONLINE</h1>
         </div>
 
-        <div class="mb-8">
-            <h2 class="text-xl font-semibold mb-3 text-green-400">Criar Nova Sala</h2>
-            <button id="lobby-btn-create-room" class="lobby-button w-full">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                </svg>
-                Gerar ID da Sala
-            </button>
-            <div id="lobby-created-room-id-display" class="room-id-display mt-3 text-center hidden">
+        <div class="md:flex md:space-x-6 lg:space-x-8">
+
+            <div class="md:w-1/2 p-4 md:p-6 border border-gray-700/50 rounded-lg mb-6 md:mb-0">
+                <h2 class="column-title text-lg md:text-xl font-semibold text-left">CRIAR NOVA SALA (Jogador 1)</h2>
+                
+                <div class="mb-3">
+                    <label for="lobby-p1-name" class="form-label">Seu Nome (Jogador 1):</label>
+                    <input type="text" id="lobby-p1-name" class="lobby-input" placeholder="Ex: General Destemido" value="Jogador 1">
                 </div>
-            <p id="lobby-share-id-instructions" class="text-xs text-gray-400 mt-2 text-center hidden">Copie e compartilhe este ID com seu oponente.</p>
-            
-            <button id="lobby-btn-confirm-create-room" class="lobby-button lobby-button-confirm w-full mt-3 hidden">
-                Confirmar e Entrar na Sala (Jogador 1)
-            </button>
+                <div class="mb-4">
+                    <label for="lobby-p1-country" class="form-label">Seu País (Jogador 1):</label>
+                    <select id="lobby-p1-country" class="lobby-select">
+                        <option value="BRASIL" selected>Brasil</option>
+                        <option value="VENEZUELA">Venezuela</option>
+                    </select>
+                </div>
+
+                <button id="lobby-btn-generate-id" class="lobby-button w-full mb-1">
+                    Gerar ID da Sala
+                </button>
+                <div id="lobby-created-room-id-display" class="room-id-display text-center hidden">
+                    </div>
+                <p id="lobby-share-id-instructions" class="instructions-text hidden">Copie e compartilhe este ID com seu oponente.</p>
+                
+                <button id="lobby-btn-confirm-create-room" class="lobby-button lobby-button-join-custom w-full mt-3 hidden"> Confirmar e Entrar na Sala (Jogador 1)
+                </button>
+            </div>
+
+            <div class="md:w-1/2 p-4 md:p-6 border border-gray-700/50 rounded-lg">
+                <h2 class="column-title text-lg md:text-xl font-semibold text-left">ENTRAR EM SALA EXISTENTE (Jogador 2)</h2>
+                <div class="mb-3">
+                    <label for="lobby-input-join-room-id" class="form-label">ID da Sala:</label>
+                    <input type="text" id="lobby-input-join-room-id" class="lobby-input" placeholder="Cole o ID da Sala aqui">
+                </div>
+                <div class="mb-3">
+                    <label for="lobby-p2-name" class="form-label">Seu Nome (Jogador 2):</label>
+                    <input type="text" id="lobby-p2-name" class="lobby-input" placeholder="Ex: Comandante Águia" value="Jogador 2">
+                </div>
+                <div class="mb-4">
+                    <label for="lobby-p2-country" class="form-label">Seu País (Jogador 2):</label>
+                    <select id="lobby-p2-country" class="lobby-select">
+                        <option value="VENEZUELA" selected>Venezuela</option>
+                        <option value="BRASIL">Brasil</option>
+                    </select>
+                </div>
+                <button id="lobby-btn-join-room" class="lobby-button lobby-button-join-custom w-full">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                    </svg>
+                    ENTRAR
+                </button>
+            </div>
         </div>
 
-        <hr class="border-gray-600 my-8">
+        <p id="lobby-message-area" class="error-message text-sm text-center mt-4 md:mt-6"></p>
 
-        <div>
-            <h2 class="text-xl font-semibold mb-3 text-green-400">Entrar em Sala Existente</h2>
-            <label for="lobby-input-join-room-id" class="block text-sm font-medium mb-1 text-gray-300">Digite o ID da Sala:</label>
-            <input type="text" id="lobby-input-join-room-id" class="lobby-input mb-3" placeholder="Ex: SELVA-ABCDE">
-            <button id="lobby-btn-join-room" class="lobby-button w-full">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
-                </svg>
-                Entrar como Jogador 2
-            </button>
-        </div>
-
-        <p id="lobby-message-area" class="error-message text-sm text-center mt-6"></p>
-
-        <div class="mt-10 text-center">
-            <button id="lobby-btn-back-to-menu" class="lobby-button lobby-button-secondary w-full max-w-xs mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-                </svg>
+        <div class="mt-6 md:mt-8 text-center">
+            <button id="lobby-btn-back-to-menu" class="lobby-button lobby-button-secondary w-full max-w-xs mx-auto text-sm py-2">
                 Voltar ao Menu Principal
             </button>
         </div>
     </div>
 
-    <script src="lobby.js" defer></script>
-</body>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+  apiKey: "AIzaSyBmaTfsScmZWO5yLtSqdFM2gI3t0x6Bp3s",
+  authDomain: "selva-c412f.firebaseapp.com",
+  databaseURL: "https://selva-c412f-default-rtdb.firebaseio.com",
+  projectId: "selva-c412f",
+  storageBucket: "selva-c412f.firebasestorage.app",
+  messagingSenderId: "646179477835",
+  appId: "1:646179477835:web:0d17a2856ac0272ae4b0ce",
+  measurementId: "G-KY1PYS0RX9"
+};  
+
+        
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      // TORNE A VARIÁVEL 'database' GLOBAL ANEXANDO-A AO 'window'
+      window.database = firebase.database();
+      console.log("Firebase INICIALIZADO COM SUCESSO e 'database' está global (lobby.html)");
+    </script>
+
+    <script src="lobby.js" defer></script> </body>
 </html>

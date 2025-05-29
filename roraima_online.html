@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selva! Guerra Estratégica - Partida Online</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
+</head>
+<body>
+    <div id="app-container" class="flex w-full h-full relative">
+
+        <div id="game-board-wrapper" class="flex-grow h-full relative overflow-hidden">
+            <div id="game-board" class="w-full h-full cursor-grab relative overflow-hidden">
+                <div id="grid-container" class="transform-origin-0-0 relative w-fit m-0 z-1">
+                    </div>
+                <div id="info-popup" class="hidden absolute bg-white border border-black p-2 rounded shadow-lg text-xs z-50 pointer-events-none">
+                    </div>
+            </div>
+
+            <div id="zoom-controls" class="absolute bottom-5 left-5 z-20 flex gap-2">
+                <button id="zoom-in-button" title="Aproximar" class="bg-gray-700 hover:bg-gray-600 text-white font-bold w-9 h-9 text-lg rounded-full shadow-md">+</button>
+                <button id="zoom-out-button" title="Afastar" class="bg-gray-700 hover:bg-gray-600 text-white font-bold w-9 h-9 text-lg rounded-full shadow-md">-</button>
+                <button id="reset-view-button" title="Resetar Vista" class="bg-gray-700 hover:bg-gray-600 text-white font-bold w-9 h-9 text-lg rounded-full shadow-md">R</button>
+                <button id="rotate-left-button" title="Girar Esquerda" class="bg-gray-700 hover:bg-gray-600 text-white font-bold w-9 h-9 text-lg rounded-full shadow-md">↶</button>
+                <button id="rotate-right-button" title="Girar Direita" class="bg-gray-700 hover:bg-gray-600 text-white font-bold w-9 h-9 text-lg rounded-full shadow-md">↷</button>
+            </div>
+        </div>
+
+        <div id="game-sidebar">
+            <div id="icon-action-bar">
+                <button class="icon-bar-button" id="icon-status-turn" title="Status e Turno">
+                    <img src="Img/icones/svg/indicadores.svg" alt="Status/Turno">
+                </button>
+                <button class="icon-bar-button active-icon-bar-button" id="icon-play" title="Jogar (Recursos/Ativos)">
+                    <img src="Img/icones/svg/ativos.svg" alt="Jogar/Ativos">
+                </button>
+                <button class="icon-bar-button" id="icon-terrain-info" title="Informações do Terreno">
+                    <img src="Img/icones/svg/terreno.svg" alt="Terreno">
+                </button>
+                <button class="icon-bar-button" id="icon-help-config" title="Ajuda e Configurações">
+                    <img src="Img/icones/svg/extras.svg" alt="Extras/Ajuda">
+                </button>
+                <button class="icon-bar-button" id="icon-menu-story" title="Configurações">
+                    <img src="Img/icones/svg/configuracao.svg" alt="Configurações">
+                </button>
+            </div>
+
+            <div id="sidebar-main-content">
+                <div id="status-turn-section" class="sidebar-section flex-grow overflow-y-auto hidden">
+                    <div class="mb-4 pb-3 border-b border-gray-700">
+                        <h3 class="text-center sidebar-section-title">INFO DA PARTIDA</h3>
+                        <div class="mt-2 space-y-1 px-2">
+                            <p class="sidebar-info-text">
+                                <strong class="sidebar-info-label">Turno de:</strong>
+                                <span id="sidebar-current-player-name-display" class="sidebar-info-value">--</span>
+                                <img id="sidebar-player-country-flag" src="img/flags/brasil.svg" alt="Bandeira Jogador Atual" class="inline-block h-4 w-6 ml-2 align-middle rounded-sm object-cover">
+                            </p>
+                            <p class="sidebar-info-text">
+                                <strong class="sidebar-info-label">País do Turno:</strong>
+                                <span id="sidebar-current-player-country-display" class="sidebar-info-value">--</span>
+                            </p>
+                            <p class="sidebar-info-text">
+                                <strong class="sidebar-info-label">Nº do Turno:</strong>
+                                <span id="sidebar-game-turn-display" class="sidebar-info-value">1</span>
+                            </p>
+                            
+                            <div class="mt-3 pt-3 border-t border-gray-600">
+                                <p class="sidebar-info-text">
+                                    <strong class="sidebar-info-label">VOCÊ É:</strong>
+                                    <span id="sidebar-local-player-name-display" class="sidebar-info-value font-semibold text-green-400">--</span>
+                                </p>
+                                <p class="sidebar-info-text">
+                                    <strong class="sidebar-info-label">Seu País:</strong>
+                                    <span id="sidebar-local-player-country-display" class="sidebar-info-value font-semibold text-green-400">--</span>
+                                    <img id="sidebar-local-player-country-flag" src="img/flags/brasil.svg" alt="Sua Bandeira" class="inline-block h-4 w-6 ml-1 align-middle rounded-sm object-cover">
+                                </p>
+                            </div>
+                        </div>
+                        <div id="sidebar-turn-controls" class="mt-4 pt-3 border-t border-gray-600 px-2">
+                            <button id="sidebar-btn-end-turn"
+                                    class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-3 rounded shadow-sm">
+                                Passar Turno
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="destruction-video-display-area">
+                        <h4 class="text-center text-gray-400 uppercase text-sm font-semibold mt-3 mb-2 sidebar-subsection-title">Última Ação de Combate</h4>
+                        <div id="video-player-container" class="w-full aspect-video bg-black rounded hidden mx-auto" style="max-width: 280px;">
+                            <video id="destruction-video-player" width="100%" height="auto" controls></video>
+                        </div>
+                        <p id="destruction-video-placeholder" class="text-xs text-gray-500 text-center px-2 py-4">
+                            Nenhuma ação de combate para exibir.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="selected-asset-info" class="sidebar-section flex-grow overflow-y-auto">
+                    </div>
+                <div id="selected-terrain-info" class="sidebar-section flex-grow overflow-y-auto hidden">
+                    </div>
+                <div id="resource-section" class="sidebar-section flex flex-col">
+                    </div>
+                <div id="settings-section" class="sidebar-section flex-grow overflow-y-auto hidden">
+                    </div>
+            </div>
+        </div>
+        <button id="sidebar-toggle-button" title="Abrir Painel" class="fixed top-1/2 -translate-y-1/2 h-20 w-9 bg-gray-900 text-white text-2xl font-bold z-[1001] flex items-center justify-center rounded-l-md">
+            &lt;
+        </button>
+    </div>
+
+    <div id="popup-game-over" class="popup-hidden fixed inset-0 z-[25000]" style="background-color: rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; padding:1rem;">
+        <div class="popup-content p-6 rounded-lg shadow-xl w-full max-w-lg relative text-center" style="background-color: #1f2937; color: #e5e7eb;">
+            <h2 id="game-over-title" class="text-3xl font-bold mb-5" style="color: #33ff00;">-- Título --</h2>
+            <div id="game-over-video-container" class="w-full aspect-video bg-black rounded mb-6 mx-auto shadow-lg" style="max-width: 480px; display:none;">
+                <video id="game-over-video-player" width="100%" height="auto" controls autoplay loop></video>
+            </div>
+            <p id="game-over-message" class="text-lg mb-8" style="color: #c7d2fe;">-- Mensagem --</p>
+            <button id="btn-exit-to-menu" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded shadow-md">
+                Sair para o Menu
+            </button>
+        </div>
+    </div>
+
+    <audio id="background-music-player" loop src="audio/musica_fundo.mp3"></audio>
+    <canvas id="deathAnimationCanvas"></canvas>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmaTfsScmZWO5yLtSqdFM2gI3t0x6Bp3s", // SUA CHAVE REAL
+            authDomain: "selva-c412f.firebaseapp.com",
+            databaseURL: "https://selva-c412f-default-rtdb.firebaseio.com",
+            projectId: "selva-c412f",
+            storageBucket: "selva-c412f.firebasestorage.app",
+            messagingSenderId: "646179477835",
+            appId: "1:646179477835:web:0d17a2856ac0272ae4b0ce",
+            measurementId: "G-KY1PYS0RX9"
+        };
+        try {
+            if (!firebase.apps.length) { // Evita reinicializar se já foi feito
+                firebase.initializeApp(firebaseConfig);
+            }
+            window.database = firebase.database();
+            console.log("Firebase INICIALIZADO com sucesso (roraima_online.html)");
+        } catch (e) {
+            console.error("Erro CRÍTICO ao inicializar Firebase SDK:", e);
+            alert("Erro crítico ao conectar com o servidor do jogo. Verifique o console e recarregue a página.");
+        }
+    </script>
+
+    <script src="game-logic.js"></script>
+    <script src="map-controls.js"></script>
+    <script src="movement-logic.js"></script>
+    <script src="combat-logic.js"></script>
+    <script src="ui-layout.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const localLogPrefixDOM = `[DOMContentLoaded]`; // Prefixo para logs deste escopo
+
+            // Garante que o Firebase SDK carregou e o database está disponível
+            if (!window.database) {
+                console.error(`${localLogPrefixDOM} Firebase 'database' não está disponível. Abortando inicialização da partida.`);
+                alert("Conexão com o servidor do jogo falhou (database indisponível). A partida não pode continuar.");
+                return;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const firebaseGameId = urlParams.get('gameId');
+            
+            window.gameNS = window.gameNS || {};
+            window.gameNS.localPlayerKey = urlParams.get('playerKey');
+            window.gameNS.localPlayerActualName = decodeURIComponent(urlParams.get('playerName') || "Jogador Local");
+            window.gameNS.localPlayerActualCountry = decodeURIComponent(urlParams.get('playerCountry') || "País Desconhecido");
+
+            if (!firebaseGameId || !window.gameNS.localPlayerKey) {
+                alert("Erro: ID do jogo ou chave do jogador ausentes. Retornando ao lobby.");
+                window.location.href = 'lobby.html';
+                return;
+            }
+
+            window.gameNS.gameRoomRef = window.database.ref('gameRooms/' + firebaseGameId);
+            console.log(`%c[${window.gameNS.localPlayerKey}] Conectando à sala: ${firebaseGameId} como ${window.gameNS.localPlayerActualName} (${window.gameNS.localPlayerActualCountry})`, "color: blue; font-weight: bold;");
+
+            // Função para carregar dados base (cardProperties, terrainData)
+            // Dentro do <script> no final de roraima_online.html
+
+                async function loadGameBaseData() {
+                const baseDataLogPrefix = `[${window.gameNS.localPlayerKey || 'INIT'}]`;
+                try {
+                    console.log(`${baseDataLogPrefix} Tentando carregar csvjson.json (propriedades dos cards)...`);
+                    const cardResponse = await fetch('csvjson.json'); // <--- NOME DO ARQUIVO CORRIGIDO
+                    if (!cardResponse.ok) {
+                        throw new Error(`Falha ao carregar csvjson.json: ${cardResponse.status} ${cardResponse.statusText} (URL: ${cardResponse.url})`);
+                    }
+                    window.gameNS.cardProperties = await cardResponse.json();
+                    console.log(`${baseDataLogPrefix} csvjson.json CARREGADO com sucesso:`, Object.keys(window.gameNS.cardProperties || {}).length, "entradas.");
+
+                    console.log(`${baseDataLogPrefix} Tentando carregar Terreno.json (dados do terreno)...`);
+                    const terrainResponse = await fetch('Terreno.json'); // <--- NOME DO ARQUIVO CORRIGIDO
+                    if (!terrainResponse.ok) {
+                        throw new Error(`Falha ao carregar Terreno.json: ${terrainResponse.status} ${terrainResponse.statusText} (URL: ${terrainResponse.url})`);
+                    }
+                    window.gameNS.terrainData = await terrainResponse.json();
+                    console.log(`${baseDataLogPrefix} Terreno.json CARREGADO com sucesso:`, Object.keys(window.gameNS.terrainData || {}).length, "entradas.");
+                } catch (error) {
+                    console.error(`${baseDataLogPrefix} Erro CRÍTICO em loadGameBaseData:`, error);
+                    alert(`Falha ao carregar dados essenciais do jogo: ${error.message}. Verifique o console e se os arquivos 'csvjson.json' e 'Terreno.json' existem na pasta raiz e são JSON válidos.`);
+                    throw error; // Re-lança o erro para parar mainGameInit se os dados base falharem
+                }
+            }
+
+            // Função principal de inicialização do jogo
+            async function mainGameInit() {
+                const mainInitLogPrefix = `[${window.gameNS.localPlayerKey || 'MainInit'}]`;
+                try {
+                    await loadGameBaseData(); // ESPERA os JSONs carregarem
+
+                    if (typeof window.gameNS.ui.initializeUI === 'function') {
+                        console.log(`${mainInitLogPrefix} Chamando window.gameNS.ui.initializeUI()...`);
+                        window.gameNS.ui.initializeUI();
+                    } else {
+                        console.error(`ERRO FATAL em mainGameInit: window.gameNS.ui.initializeUI NÃO ESTÁ DEFINIDA! Verifique se ui-layout.js está incluído ANTES deste script e se não há erros nele.`);
+                        alert("Erro fatal na inicialização da UI. Verifique o console.");
+                        return; // Para a execução
+                    }
+                } catch (error) {
+                    console.error(`${mainInitLogPrefix} Falha durante mainGameInit (provavelmente em loadGameBaseData):`, error);
+                    return; // Não configura o listener do Firebase se os dados base falharam
+                }
+
+                // Configura o listener do Firebase DEPOIS que a UI básica e os dados base estão prontos
+                window.gameNS.gameRoomRef.on('value', (snapshot) => {
+                    const firebaseListenerLogPrefix = `[${window.gameNS.localPlayerKey || 'FirebaseListener'}]`;
+
+                    if (!snapshot.exists()) {
+                        console.error(`%c${firebaseListenerLogPrefix} A sala do jogo ${firebaseGameId} não existe mais ou foi removida.`, "color: red; font-weight: bold;");
+                        // ... (lógica para sala não existente) ...
+                        return;
+                    }
+                    
+                    window.firebaseRoomData = snapshot.val();
+                    console.log(`%c${firebaseListenerLogPrefix} Dados da sala recebidos/atualizados do Firebase:`, "color: green;", JSON.parse(JSON.stringify(window.firebaseRoomData)));
+
+                    window.gameNS.gameState = window.gameNS.gameState || {}; // Garante que gameState exista
+                    // ... (seu código existente para popular window.gameNS.gameState com dados de player1, player2, currentTurn, currentPlayerKey, etc.)
+                     window.gameNS.gameState.gameMode = 'Versus Online';
+                     window.gameNS.gameState.gameId = firebaseGameId;
+                     // ... (popule o resto do gameState)
+
+                    // *** Define o país para o filtro de RECURSOS ***
+                    if (window.gameNS.localPlayerActualCountry) {
+                        window.gameNS.gameState.countryForResourceFilter = window.gameNS.localPlayerActualCountry;
+                        console.log(`%c${firebaseListenerLogPrefix} gameState.countryForResourceFilter DEFINIDO PARA: ${window.gameNS.gameState.countryForResourceFilter}`, "background: #eee; color: #333; padding: 2px;");
+                    } else {
+                        console.error(`%c${firebaseListenerLogPrefix} ERRO CRÍTICO: window.gameNS.localPlayerActualCountry não definido! Filtros não funcionarão.`, "color: red;");
+                        window.gameNS.gameState.countryForResourceFilter = null;
+                    }
+
+                    // Atualiza a UI principal da sidebar
+                    if (typeof window.gameNS.loadAndDisplayGameInfo === 'function') {
+                        window.gameNS.loadAndDisplayGameInfo();
+                    }
+
+                    // Popula os filtros de recursos e os cards
+                    if (typeof window.gameNS.populateForcaFilter === 'function') {
+                        if (window.gameNS.gameState.countryForResourceFilter) {
+                            console.log(`%c${firebaseListenerLogPrefix} Chamando populateForcaFilter com país: ${window.gameNS.gameState.countryForResourceFilter}`, "color:darkorange;");
+                            window.gameNS.populateForcaFilter(window.gameNS.gameState.countryForResourceFilter);
+                        } else {
+                            console.warn(`${firebaseListenerLogPrefix} País para filtro de recursos não definido, filtros de força não populados.`);
+                            // Limpa a UI dos filtros/recursos se o país não estiver OK
+                            const resourceList = document.getElementById('resource-list');
+                            if (resourceList) resourceList.innerHTML = '<p class="text-xs text-gray-500 text-center p-4">Erro ao carregar país.</p>';
+                            ['filter-forca-select', 'filter-categoria-select'].forEach(id => {
+                                const sel = document.getElementById(id);
+                                if (sel) sel.innerHTML = `<option value="todos">--</option><option value="" disabled>País indefinido</option>`;
+                            });
+                        }
+                    }
+                    
+                    // Redesenha unidades no mapa
+                     console.log(`%c${firebaseListenerLogPrefix} PREPARANDO PARA REDRAW. Dados de cardProperties (tem ${Object.keys(window.gameNS.cardProperties || {}).length} chaves).`, "color: orange; font-weight:bold;");
+                    if (window.gameNS.ui?.redrawAllUnits) {
+                        try {
+                            window.gameNS.ui.redrawAllUnits();
+                        } catch (error) {
+                            console.error(`%c${firebaseListenerLogPrefix} ERRO DURANTE redrawAllUnits():`, "color: red; font-weight:bold;", error);
+                        }
+                    } else {
+                        console.error(`%c${firebaseListenerLogPrefix} ERRO CRÍTICO: window.gameNS.ui.redrawAllUnits NÃO DEFINIDA!`, "color: red;");
+                    }
+                    
+                    // ... (resto da sua lógica do listener: clearActionHighlights, activeUnitForAction, endTurnButton, gameOverPopup, etc.) ...
+                }); // Fim do window.gameNS.gameRoomRef.on('value')
+            } // Fim de mainGameInit
+
+            // Inicia o processo de inicialização do jogo
+            mainGameInit();
+
+        }); // Fim do DOMContentLoaded
+    </script>
+    </body>
+    </html>

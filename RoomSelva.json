@@ -1,0 +1,84 @@
+{
+  "gameRooms": {
+    "SELVA-DEMO123": {
+      "player1": {
+        "name": "Jogador 1-Nome",
+        "country": "BRASIL"
+      },
+      "player2": {
+        "name": "Jogador 2-Nome",
+        "country": "VENEZUELA"
+      },
+      "status": "ongoing",
+      "currentTurnPlayerKey": "player1",
+      "currentTurnNumber": 1,
+      "mapFile": "mapa_roraima.html",
+      "gameStateLastUpdate": "2024-05-27T10:00:00Z", 
+      "winner": null, 
+      "winReason": null, 
+      "initialSetupCompletedBy": { 
+          "player1": false,
+          "player2": false
+      },
+      "placedUnits": {
+        "tanque_br_1": {
+          "originalUnitIdKey": "TanqueDeBatalha_BRASIL_ID_Exemplo", 
+          "currentHex": "H28",
+          "PAÍS": "BRASIL", 
+          "NOME": "Tanque Leão", 
+          "currentBlindagem": 10,
+          "currentMovimento": 7,
+          "currentAlcance": 3, 
+          "hasMovedThisTurn": false, 
+          "hasAttackedThisTurn": false, 
+          "isDamaged": false 
+        },
+        "infantaria_vz_1": {
+          "originalUnitIdKey": "Infantaria_VENEZUELA_ID_Exemplo",
+          "currentHex": "J5", 
+          "PAÍS": "VENEZUELA", 
+          "NOME": "Guerrilheiros da Selva",
+          "currentBlindagem": 50, 
+          "currentMovimento": 3, 
+          "currentAlcance": 1, 
+          "hasMovedThisTurn": false, 
+          "hasAttackedThisTurn": false, 
+          "isDamaged": false 
+        },
+        "qg_br_1": {
+            "originalUnitIdKey": "QG_BRASIL_ID_Exemplo",
+            "currentHex": "F30", 
+            "PAÍS": "BRASIL", 
+            "NOME": "Comando Águia",
+            "currentBlindagem": 200, 
+            "currentMovimento": 0, 
+            "currentAlcance": 0, 
+            "hasMovedThisTurn": false, 
+            "hasAttackedThisTurn": false, 
+            "isDamaged": false 
+        },
+        "qg_vz_1": {
+            "originalUnitIdKey": "QG_VENEZUELA_ID_Exemplo",
+            "currentHex": "I13", 
+            "PAÍS": "VENEZUELA", 
+            "NOME": "Fortaleza Guarida",
+            "currentBlindagem": 200, 
+            "currentMovimento": 0, 
+            "currentAlcance": 0, 
+            "hasMovedThisTurn": false, 
+            "hasAttackedThisTurn": false, 
+            "isDamaged": false 
+        }
+      },
+      "lastAction": "ataque",
+        "actionType": "movimento", 
+        "actingPlayerKey": "player1",
+        "details": {
+          "unitId": "tanque_br_1",
+          "fromHex": "G28",
+          "toHex": "H28"
+        },
+        "timestamp": "2024-05-27T10:00:05Z"
+      }
+    }
+}

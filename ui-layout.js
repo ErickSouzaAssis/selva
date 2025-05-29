@@ -407,85 +407,69 @@ window.gameNS.switchSidebarView = function(viewName) {
 };
 
 window.gameNS.loadAndDisplayGameInfo = function() {
-    const gameDifficultyDisplay = document.getElementById('sidebar-game-difficulty-display');
-    const currentPlayerNameDisplay = document.getElementById('sidebar-current-player-name-display');
-    const currentPlayerCountryDisplay = document.getElementById('sidebar-current-player-country-display');
-    const playerCountryFlagImg = document.getElementById('sidebar-player-country-flag');
-    const gameTurnDisplay = document.getElementById('sidebar-game-turn-display');
-    const difficultyParagraph = document.getElementById('sidebar-difficulty-paragraph');
-
-    if (!window.gameNS.gameState || !window.gameNS.gameState.gameModeBeenSetThisSession) { //
-        console.warn("[UI-LAYOUT loadAndDisplayGameInfo] gameState.gameModeBeenSetThisSession é false. Tentando inicializar com 'gameSetupInfo' do localStorage.");
-        const setupInfoString = localStorage.getItem('gameSetupInfo'); //
-        if (setupInfoString) {
-            try {
-                const setupInfo = JSON.parse(setupInfoString); //
-                if (setupInfo && setupInfo.gameMode) { //
-                    if (setupInfo.gameMode === 'Campanha' && typeof window.gameNS.initializeCampaignGame === 'function') { //
-                        window.gameNS.initializeCampaignGame(setupInfo); //
-                    } else if (setupInfo.gameMode === 'Versus Local' && typeof window.gameNS.initializeMultiplayerLocalGame === 'function') { //
-                        window.gameNS.initializeMultiplayerLocalGame(setupInfo); //
-                    } else {
-                        console.error("[UI-LAYOUT loadAndDisplayGameInfo] gameMode de 'gameSetupInfo' desconhecido ou função de init ausente:", setupInfo.gameMode);
-                    }
-                } else {
-                     console.error("[UI-LAYOUT loadAndDisplayGameInfo] 'gameSetupInfo' do localStorage é inválido ou não tem gameMode.");
-                }
-            } catch (e) {
-                console.error("[UI-LAYOUT loadAndDisplayGameInfo] Erro ao parsear 'gameSetupInfo' do localStorage:", e);
-            }
-        } else {
-            console.error("[UI-LAYOUT loadAndDisplayGameInfo] Nenhuma informação de 'gameSetupInfo' encontrada no localStorage para fallback de inicialização.");
-            if (currentPlayerNameDisplay) currentPlayerNameDisplay.textContent = 'N/A';
-            if (currentPlayerCountryDisplay) currentPlayerCountryDisplay.textContent = 'N/A';
-            if (playerCountryFlagImg) playerCountryFlagImg.style.display = 'none';
-            if (gameTurnDisplay) gameTurnDisplay.textContent = 'N/A';
-            if (difficultyParagraph) difficultyParagraph.style.display = 'none';
-            return;
-        }
-    }
-
-    const currentGame = window.gameNS.gameState; //
-
-    if (!currentGame || !currentGame.gameMode || currentGame.gameMode === 'N/A' || currentGame.gameMode === 'ERROR_NO_SETUP') { //
-        console.error("[UI-LAYOUT loadAndDisplayGameInfo] CRÍTICO: gameState ou gameState.gameMode inválido após tentativas de inicialização.");
-        if (currentPlayerNameDisplay) currentPlayerNameDisplay.textContent = 'ERRO';
-        if (currentPlayerCountryDisplay) currentPlayerCountryDisplay.textContent = 'ERRO';
-        if (playerCountryFlagImg) playerCountryFlagImg.style.display = 'none';
-        if (gameTurnDisplay) gameTurnDisplay.textContent = 'ERRO';
-        if (difficultyParagraph) difficultyParagraph.style.display = 'none';
+    // ... (seu código existente para difficulty, currentPlayerName, currentPlayerCountry, playerCountryFlagImg, gameTurnDisplay) ...
+    // Verifique se window.gameNS.gameState existe antes de usá-lo
+    if (!window.gameNS.gameState) {
+        console.warn("[loadAndDisplayGameInfo] gameState não definido. Informações da sidebar não podem ser totalmente carregadas.");
+        // Preencher com N/A ou traços se o gameState não estiver pronto
+        document.getElementById('sidebar-current-player-name-display').textContent = '--';
+        // ... etc. para outros campos ...
         return;
     }
-    window.gameNS.currentGameInfo = { ...currentGame }; //
+    const currentGame = window.gameNS.gameState;
 
-
-    const countryFlags = {
-        "BRASIL": "img/flags/brasil.svg",
-        "VENEZUELA": "img/flags/venezuela.svg",
-        "DEFAULT": "img/flags/brasil.svg"
-    };
-
-    if (gameDifficultyDisplay && difficultyParagraph) {
-        if (currentGame.gameMode === 'Campanha') { //
-            gameDifficultyDisplay.textContent = currentGame.difficulty || 'N/A'; //
-            difficultyParagraph.style.display = 'block';
+    // Seu código para informações do TURNO ATUAL (mantenha e verifique)
+    document.getElementById('sidebar-current-player-name-display').textContent = currentGame.currentPlayerName || '--';
+    document.getElementById('sidebar-current-player-country-display').textContent = currentGame.currentPlayerCountry || '--';
+    const playerCountryFlagImg = document.getElementById('sidebar-player-country-flag');
+    if (playerCountryFlagImg) {
+        const flagSrc = (window.gameNS.countryFlags && window.gameNS.countryFlags[currentGame.currentPlayerCountry?.toUpperCase()]) || (window.gameNS.countryFlags && window.gameNS.countryFlags["DEFAULT"]);
+        if (flagSrc && currentGame.currentPlayerCountry && currentGame.currentPlayerCountry !== 'N/A') {
+            playerCountryFlagImg.src = flagSrc;
+            playerCountryFlagImg.alt = `Bandeira ${currentGame.currentPlayerCountry}`;
+            playerCountryFlagImg.style.display = 'inline-block';
         } else {
-            difficultyParagraph.style.display = 'none';
+            playerCountryFlagImg.style.display = 'none';
         }
     }
-    if (currentPlayerNameDisplay) currentPlayerNameDisplay.textContent = currentGame.currentPlayerName || '--'; //
-    if (currentPlayerCountryDisplay) {
-        currentPlayerCountryDisplay.textContent = currentGame.currentPlayerCountry || '--'; //
+    document.getElementById('sidebar-game-turn-display').textContent = currentGame.currentTurn || '1';
+    // ... (seu código para dificuldade) ...
+
+
+    // --- INÍCIO DA INTEGRAÇÃO PARA "VOCÊ É:" ---
+    const localNameDisplay = document.getElementById('sidebar-local-player-name-display');
+    const localCountryTextDisplay = document.getElementById('sidebar-local-player-country-display');
+    const localFlagDisplay = document.getElementById('sidebar-local-player-country-flag');
+
+    // window.gameNS.localPlayerActualName e window.gameNS.localPlayerActualCountry
+    // devem ser definidos no script inline de roraima_online.html a partir dos parâmetros da URL.
+    if (localNameDisplay && window.gameNS.localPlayerActualName) {
+        localNameDisplay.textContent = window.gameNS.localPlayerActualName;
+    } else if (localNameDisplay) {
+        localNameDisplay.textContent = 'Você (Nome Desc.)'; // Fallback
     }
-    if (playerCountryFlagImg) {
-        const flagSrc = countryFlags[currentGame.currentPlayerCountry?.toUpperCase()] || countryFlags["DEFAULT"]; //
-        playerCountryFlagImg.src = flagSrc;
-        playerCountryFlagImg.alt = `Bandeira ${currentGame.currentPlayerCountry || 'Desconhecido'}`; //
-        playerCountryFlagImg.style.display = (currentGame.currentPlayerCountry && currentGame.currentPlayerCountry !== 'N/A') ? 'inline-block' : 'none'; //
+
+    if (localCountryTextDisplay && window.gameNS.localPlayerActualCountry) {
+        localCountryTextDisplay.textContent = window.gameNS.localPlayerActualCountry;
+    } else if (localCountryTextDisplay) {
+        localCountryTextDisplay.textContent = 'País Desc.'; // Fallback
     }
-    if (gameTurnDisplay) gameTurnDisplay.textContent = currentGame.currentTurn || '1'; //
+
+    if (localFlagDisplay) {
+        if (window.gameNS.localPlayerActualCountry && window.gameNS.localPlayerActualCountry !== "País Desconhecido" && window.gameNS.localPlayerActualCountry !== "N/A") {
+            const localUserFlagFile = window.gameNS.localPlayerActualCountry.toLowerCase().replace(/\s+/g, '_') + '.svg';
+            localFlagDisplay.src = `img/flags/${localUserFlagFile}`; // Certifique-se que o caminho e nomes de arquivo estão corretos
+            localFlagDisplay.alt = `Sua Bandeira: ${window.gameNS.localPlayerActualCountry}`;
+            localFlagDisplay.style.display = 'inline-block';
+        } else {
+            localFlagDisplay.style.display = 'none'; // Esconde se o país não for válido ou conhecido
+        }
+    }
+    // --- FIM DA INTEGRAÇÃO PARA "VOCÊ É:" ---
+
     console.log("[UI-LAYOUT loadAndDisplayGameInfo] Info da partida exibida na sidebar (lida de gameState):", JSON.parse(JSON.stringify(currentGame)));
 };
+
 
 
 // --- Funções para exibir e resetar vídeo de abate ---
@@ -1229,6 +1213,11 @@ window.gameNS.ui.showGameOverPopup = function(title, message, videoPath) {
     };
 
     window.gameNS.rebuildPlacedUnitsOnMap = function() {
+    const localPlayerIDForLog = window.gameNS.localPlayerKey || 'UI-RBUR'; // Para logs
+    console.log(`%c[${localPlayerIDForLog} - rebuildPlacedUnitsOnMap] INICIANDO RECONSTRUÇÃO DE UNIDADES NO MAPA.`, "color: blue; font-weight: bold;");
+    console.log(`%c[${localPlayerIDForLog} - rebuildPlacedUnitsOnMap] window.gameNS.placedUnits ATUAL:`, "color: purple;", JSON.parse(JSON.stringify(window.gameNS.placedUnits || {})));
+    console.log(`%c[${localPlayerIDForLog} - rebuildPlacedUnitsOnMap] window.gameNS.cardProperties CARREGADO? ${window.gameNS.cardProperties && Object.keys(window.gameNS.cardProperties).length > 0}`, "color: purple;");
+    // FIM DAS LINHAS A SEREM ADICIONADAS
         console.log("[UI-LAYOUT rebuildPlacedUnitsOnMap] Reconstruindo unidades no mapa a partir do estado salvo...");
         if (!window.gameNS.placedUnits || Object.keys(window.gameNS.placedUnits).length === 0) { //
             console.log("[UI-LAYOUT rebuildPlacedUnitsOnMap] Nenhuma unidade para reconstruir.");
@@ -1243,19 +1232,29 @@ window.gameNS.ui.showGameOverPopup = function(title, message, videoPath) {
         for (const instanceId in window.gameNS.placedUnits) { //
             const unitInstance = window.gameNS.placedUnits[instanceId]; //
             const unitBaseData = window.gameNS.cardProperties[unitInstance.originalUnitIdKey]; //
+            console.log(`%c[${localPlayerIDForLog} - rebuildPlacedUnitsOnMap] Processando unidade: ${instanceId}`, "color: teal;", unitInstance);
+
 
             if (!unitInstance || !unitBaseData || !unitInstance.currentHex) { //
                 console.warn(`[UI-LAYOUT rebuildPlacedUnitsOnMap] Dados inválidos para unidade ${instanceId}. Pulando.`);
                 continue;
+                console.warn(`%c[${localPlayerIDForLog} - rebuildPlacedUnitsOnMap] Instância ${instanceId} inválida ou sem originalUnitIdKey. Pulando.`, "color:orange;", unitInstance || 'Instance is null/undefined');
+                continue;
+
             }
 
             const targetHexSvg = window.gameNS.utils.getHexagonSvgByCoord(unitInstance.currentHex); //
             if (!targetHexSvg) {
                 console.warn(`[UI-LAYOUT rebuildPlacedUnitsOnMap] Hexágono SVG para ${unitInstance.currentHex} não encontrado. Unidade ${instanceId} não pode ser colocada.`); //
                 continue;
+                console.warn(`%c[${localPlayerIDForLog} - rebuildPlacedUnitsOnMap] Unidade ${instanceId} ("${unitInstance.NOME || unitBaseData.NOME}") não possui currentHex. Pulando.`, "color:orange;");
+                continue;
+
             }
+            console.log(`%c[${localPlayerIDForLog} - rebuildPlacedUnitsOnMap] Tentando encontrar hexWrapper para ${unitInstance.currentHex} (unidade ${instanceId})`, "color: teal;");
             const targetHexWrapperElem = targetHexSvg.closest('.hexagon-wrapper');
             let targetHexContentOverlayElem = targetHexWrapperElem?.querySelector('.hexagon-content-overlay');
+            
             if (!targetHexContentOverlayElem && targetHexWrapperElem) {
                 targetHexContentOverlayElem = document.createElement('div');
                 targetHexContentOverlayElem.className = 'hexagon-content-overlay';
@@ -1378,6 +1377,7 @@ window.gameNS.ui.showGameOverPopup = function(title, message, videoPath) {
     };
 
     document.addEventListener('DOMContentLoaded', async () => {
+        
         console.log("[UI-LAYOUT DOMContentLoaded] Iniciado.");
         const gameSidebar = document.getElementById('game-sidebar');
         const sidebarToggleButton = document.getElementById('sidebar-toggle-button');
@@ -2108,48 +2108,7 @@ window.gameNS.ui.showGameOverPopup = function(title, message, videoPath) {
             };
             container.appendChild(slotButton);
         }
-    }
 
-    // Adicionar listeners para o popup de save in-game (após o DOM estar carregado)
-    document.addEventListener('DOMContentLoaded', () => {
-     // --- Listeners para o Popup de Salvar Jogo In-Game ---
-    const btnOpenSavePopup = document.getElementById('btn-open-save-popup');
-    const btnCloseInGameSavePopup = document.getElementById('btn-close-ingame-save-popup'); // Pega o botão de fechar pelo ID
-    const popupInGameSaveSlots = document.getElementById('popup-ingame-save-slots'); // Pega o popup pelo ID
+    };
 
-    if (btnOpenSavePopup && popupInGameSaveSlots) {
-        btnOpenSavePopup.addEventListener('click', () => {
-            // A função populateInGameSaveSlots deve estar definida em algum lugar ANTES daqui
-            if (typeof populateInGameSaveSlots === 'function') {
-                populateInGameSaveSlots();
-                popupInGameSaveSlots.classList.remove('popup-hidden');
-            } else {
-                console.error("Função populateInGameSaveSlots não definida ao tentar abrir popup de save.");
-            }
-        });
-    } else {
-        // Avisa se os elementos não forem encontrados, ajuda no debug
-        if (!btnOpenSavePopup) console.warn("Botão para abrir popup de save (#btn-open-save-popup) não encontrado.");
-        if (!popupInGameSaveSlots) console.warn("Popup de save in-game (#popup-ingame-save-slots) não encontrado.");
-    }
-
-    if (btnCloseInGameSavePopup && popupInGameSaveSlots) {
-        // Quando o botão "X" (com ID 'btn-close-ingame-save-popup') é clicado
-        btnCloseInGameSavePopup.addEventListener('click', () => {
-            popupInGameSaveSlots.classList.add('popup-hidden'); // Esconde o popup
-        });
-    }  else {
-        if (!btnCloseInGameSavePopup) console.warn("Botão para fechar popup de save (#btn-close-ingame-save-popup) não encontrado.");
-    }
-
-    if (popupInGameSaveSlots) {
-        // Quando se clica no fundo escuro (overlay) do popup
-        popupInGameSaveSlots.addEventListener('click', (event) => {
-            if (event.target === popupInGameSaveSlots) { // Só fecha se o clique for no próprio overlay
-                popupInGameSaveSlots.classList.add('popup-hidden'); // Esconde o popup
-            }
-        });
-    }
-    // --- Fim dos Listeners do Popup de Salvar Jogo In-Game ---
-
-    });
+    
